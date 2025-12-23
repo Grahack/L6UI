@@ -613,10 +613,30 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    int internalMargin = 25;
+    int internalMargin;  // margin between sections
+    int headerHeight;    // channel and ports
+    int comboHeight;
+    int slidersHeight;
+    int slidersLabelHeight;
+    if (false)
+    {
+        // total height is approx 1000
+        internalMargin = 25;
+        headerHeight = 50;
+        comboHeight = 40;
+        slidersLabelHeight = 26;  // fixed for now
+        slidersHeight = 150;
+    } else {
+        // total height is approx 750
+        internalMargin = 10;
+        headerHeight = 38;
+        comboHeight = 30;
+        slidersLabelHeight = 26;  // fixed for now
+        slidersHeight = 110;
+    }
+
     auto area = getLocalBounds();
     int totalW = area.getWidth();
-    int headerHeight = 50;
     auto headerArea = area.removeFromTop(headerHeight);
     channelSelector.setBounds(headerArea.removeFromLeft(totalW * 1 / 10));
     midiInputSelector.setBounds(headerArea.removeFromLeft(totalW * 4 / 10));
@@ -627,7 +647,7 @@ void MainComponent::resized()
     // Oscillators section
     // Protect this section from a premature execution
     if (oscAlgosArray.size() < 3) return;
-    int algosComboBoxHeight = 40;
+    int algosComboBoxHeight = comboHeight;
     auto algosArea = area.removeFromTop(algosComboBoxHeight);
     int oscSlidersWidth = algosArea.getWidth() / 20;
     for (int i = 0; i < 3; i++)
@@ -637,8 +657,6 @@ void MainComponent::resized()
     }
     // Protect this section from a premature execution
     if (slidersArray.size() == 0) return;
-    int slidersHeight = 150;
-    int slidersLabelHeight = 26;
     area.removeFromTop(slidersLabelHeight);  // spacer for the attached labels
     auto oscArea = area.removeFromTop(slidersHeight);
     for (int i = 0; i < 17; i++)
@@ -652,7 +670,7 @@ void MainComponent::resized()
     // some space
     area.removeFromTop(internalMargin);
     // env + LFO section
-    int envHeaderHeight = 40;
+    int envHeaderHeight = comboHeight;
     int envLFOHeight = envHeaderHeight + slidersLabelHeight + slidersHeight;
     auto envLFOArea = area.removeFromTop(envLFOHeight);
     // env section : labels
@@ -701,7 +719,7 @@ void MainComponent::resized()
     // some space
     area.removeFromTop(internalMargin);
     // Voice + Filter + FX section: VFFX
-    int VFFXHeaderHeight = 40;
+    int VFFXHeaderHeight = comboHeight;
     int VFFXHeight = 2*VFFXHeaderHeight + slidersLabelHeight + slidersHeight;
     auto VFFXArea = area.removeFromTop(VFFXHeight);
     int VFFXSlidersWidth = area.getWidth() / 18.5;
