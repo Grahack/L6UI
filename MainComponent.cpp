@@ -5,9 +5,9 @@ MainComponent::MainComponent()
     setSize(1000, 1000);
 
     juce::Colour dark = juce::Colour (40, 40, 40);
-    juce::Colour mm2 = juce::Colour (0xffF76D22);
+    juce::Colour l6 = customLookAndFeel.l6;
 
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, mm2);
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, l6);
     getLookAndFeel().setColour(juce::Slider::textBoxTextColourId,
                                juce::Colours::white);
     getLookAndFeel().setColour(juce::Slider::textBoxBackgroundColourId, dark);
@@ -16,7 +16,7 @@ MainComponent::MainComponent()
     getLookAndFeel().setColour(juce::Slider::backgroundColourId,
                                juce::Colours::lightgrey);
     getLookAndFeel().setColour(juce::TextButton::buttonColourId, dark);
-    customLookAndFeel.setColour(juce::Label::backgroundColourId, mm2);
+    customLookAndFeel.setColour(juce::Label::backgroundColourId, l6);
     customLookAndFeel.setColour(juce::Label::textColourId,
                                juce::Colours::black);
 
@@ -388,7 +388,7 @@ MainComponent::MainComponent()
         auto filterLblFont = juce::FontOptions(18.0f, juce::Font::bold);
         filterLblArray[i]->setFont(filterLblFont);
         filterLblArray[i]->setLookAndFeel(&customLookAndFeel);
-        filterLblArray[i]->setColour(juce::Label::backgroundColourId, mm2);
+        filterLblArray[i]->setColour(juce::Label::backgroundColourId, l6);
         filterLblArray[i]->setColour(juce::Label::textColourId,
                                      juce::Colours::black);
         // rotary sliders

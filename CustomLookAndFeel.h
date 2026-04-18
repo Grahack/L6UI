@@ -2,12 +2,13 @@ class CustomLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
 
-    const juce::Colour mm2 = juce::Colour (0xffF76D22);
+    const juce::Colour l6 = juce::Colour (0xff00aaff);
+    const juce::Colour l6_rotary_outline = juce::Colours::white;
+    const juce::Colour l6_rotary_pointer = juce::Colours::black;
 
     CustomLookAndFeel()
     {
-        setColour (juce::Slider::thumbColourId, juce::Colours::red);
-        setColour (juce::ComboBox::backgroundColourId, mm2);
+        setColour (juce::ComboBox::backgroundColourId, l6);
         setColour (juce::ComboBox::arrowColourId, juce::Colours::black);
         setColour (juce::ComboBox::textColourId, juce::Colours::black);
         setColour (juce::ComboBox::outlineColourId, juce::Colours::black);
@@ -30,11 +31,11 @@ public:
         auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
         // fill
-        g.setColour (mm2);
+        g.setColour (l6);
         g.fillEllipse (rx, ry, rw, rw);
 
         // outline
-        g.setColour (juce::Colours::red);
+        g.setColour (l6_rotary_outline);
         g.drawEllipse (rx, ry, rw, rw, 1.0f);
 
         juce::Path p;
@@ -44,7 +45,7 @@ public:
         p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
 
         // pointer
-        g.setColour (juce::Colours::yellow);
+        g.setColour (l6_rotary_pointer);
         g.fillPath (p);
     }
 
