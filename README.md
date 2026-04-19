@@ -1,5 +1,5 @@
-# MM2UI
+# L6UI
 
-MicroMonsta2 User Interface built with the JUCE library
+Zoom LiveTrak L6 User Interface built with the JUCE library
 
 ![screenshot: WIP](scrot.png)
