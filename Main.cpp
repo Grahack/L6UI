@@ -8,7 +8,7 @@ public:
     const juce::String getApplicationVersion() override  { return "0.1.0"; }
 
     void initialise(const juce::String&) override {
-        mainWindow.reset(new MainWindow("L2UI", new MainComponent(), *this));
+        mainWindow.reset(new MainWindow("L6UI", new MainComponent(), *this));
     }
 
     void shutdown() override {
