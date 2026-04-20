@@ -201,9 +201,9 @@ void MainComponent::resized()
     // some space
     area.removeFromTop(internalMargin);
     // Tracks section
-    // We use a seventh strip for the global section, so we have 6 spaces
+    // We use a 7th (half) strip for the global section, so we have 6 spaces
     int trackSpace = totalW / 30;  // space between tracks
-    int trackWidth = (totalW - 6 * trackSpace) / 7;
+    int trackWidth = (totalW - 6 * trackSpace) / 6.5;
     int potsHeight = totalH / 9;  // 8 pots + 1 mute
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
