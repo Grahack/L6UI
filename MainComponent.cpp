@@ -439,7 +439,7 @@ void MainComponent::sendPC(int chan, int pc)
 void MainComponent::handleIncomingMidiMessage(juce::MidiInput* source,
                                               const juce::MidiMessage& message)
 {
-    //DBG("Received MIDI message: " + message.getDescription());
+    DBG("Received MIDI message: " + message.getDescription());
     if (message.isSysEx()) return;
 
 }
