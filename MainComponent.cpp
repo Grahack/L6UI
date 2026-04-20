@@ -53,21 +53,34 @@ MainComponent::MainComponent()
         slidersArray[i]->setRange(0, 127, 1);
         slidersArray[i]->setNumDecimalPlacesToDisplay(0);
         addAndMakeVisible(*slidersArray[i]);
-        if ((i+1) % 9 == 0)
+        int sliderType = i % 9;
+        if (sliderType == 8)
         {
+            // Level
             slidersArray[i]->setSliderStyle(juce::Slider::LinearVertical);
-            slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
+            slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 30);
         } else {
+            // Other rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
             slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
-            slidersArray[i]->setValue(64);
-            slidersArray[i]->textFromValueFunction = [](double value)
+            if (sliderType == 5 || sliderType == 6)
             {
-                int v = static_cast<int>(value);
-                if (v == 64) return juce::String("C"); // centre
-                if (v < 64) return "L" + juce::String(64 - v);
-                return "R" + juce::String(v - 64);
-            };
+                // Aux sends
+                slidersArray[i]->setValue(0, juce::dontSendNotification);
+            } else {
+                slidersArray[i]->setValue(64, juce::dontSendNotification);
+            }
+            if (sliderType == 7)
+            {
+                // Pan
+                slidersArray[i]->textFromValueFunction = [](double value)
+                {
+                    int v = static_cast<int>(value);
+                    if (v == 64) return juce::String("C");
+                    if (v < 64)  return "L" + juce::String(64 - v);
+                    return "R" + juce::String(v - 64);
+                };
+            }
         }
     }
     for (int i = 0; i < 6; i++)
@@ -83,6 +96,10 @@ MainComponent::MainComponent()
         addAndMakeVisible(*mutesArray[i]);
     }
     // global section
+    enum RadioButtonIds {
+        ScenesButtons = 1001,
+        FxButtons = 1002
+    };
     // scenes
     const char* scenesTxt[] = {"A", "B", "C"};
     for (int i = 0; i < 3; i++)
@@ -93,6 +110,10 @@ MainComponent::MainComponent()
         scenesArray[i]->setColour(juce::TextButton::buttonOnColourId,
                                   juce::Colours::darkgreen);
         scenesArray[i]->addListener(this);
+        scenesArray[i]->setRadioGroupId (ScenesButtons);
+        scenesArray[i]->onClick = [this, i] {
+            updateRadios (scenesArray[i], "SC" + std::to_string(i));
+        };
         addAndMakeVisible(*scenesArray[i]);
     }
     scenesArray[0]->setToggleState(true, juce::dontSendNotification);
@@ -106,6 +127,10 @@ MainComponent::MainComponent()
         fxArray[i]->setColour(juce::TextButton::buttonOnColourId,
                               juce::Colours::darkgreen);
         fxArray[i]->addListener(this);
+        fxArray[i]->setRadioGroupId (FxButtons);
+        fxArray[i]->onClick = [this, i] {
+            updateRadios (fxArray[i], "FX" + std::to_string(i));
+        };
         addAndMakeVisible(*fxArray[i]);
     }
     fxArray[0]->setToggleState(true, juce::dontSendNotification);
@@ -114,7 +139,7 @@ MainComponent::MainComponent()
     compButton.setClickingTogglesState(true);
     compButton.setToggleState(false, juce::dontSendNotification);
     compButton.setColour(juce::TextButton::buttonColourId,
-                         juce::Colours::darkgrey);
+                         juce::Colours::darkred);
     compButton.setColour(juce::TextButton::buttonOnColourId,
                              juce::Colours::darkgreen);
     compButton.addListener(this);
@@ -328,23 +353,47 @@ void MainComponent::comboBoxChanged(juce::ComboBox* combo)
     }
 }
 
+void MainComponent::updateRadios(juce::Button* button, juce::String name)
+{
+    auto state = button->getToggleState();
+    juce::String stateString = state ? "ON" : "OFF";
+    DBG (name + " Button changed to " + stateString);
+}
+
 void MainComponent::buttonClicked(juce::Button* button)
 {
+    auto state = button->getToggleState();
+    for (int i = 0; i < 6; i++)
+    {
+        if (button == mutesArray[i])
+        {
+            juce::String stateString = state ? "unmute" : "mute";
+            DBG(stateString + " track " + std::to_string(i+1));
+        }
+    }
     for (int i = 0; i < 3; i++)
     {
         if (button == scenesArray[i])
         {
+            DBG("scene " + std::to_string(i));
+            sendPC(channel, i);
         }
     }
     for (int i = 0; i < 5; i++)
     {
         if (button == fxArray[i])
         {
+            DBG("FX " + std::to_string(i));
+            sendCC(channel, fxCC, i);
         }
     }
     if (button == &compButton)
     {
         int value = button->getToggleState() ? 1 : 0;
+        juce::String stateString = state ? "on" : "off";
+        DBG("comp " + stateString);
+        int ccValue = state ? 1 : 0;
+        sendCC(channel, compCC, ccValue);
     }
 }
 
@@ -354,47 +403,14 @@ void MainComponent::sliderValueChanged(juce::Slider* slider)
     {
         if (slider == slidersArray[i])
         {
+            int trackNum = (int)(i/9 + 1);
             int value = (*slider).getValue();
-            if ( i == 14 )  // EQ
-            {
-            }
-            else if ( i == 34 )  // Cutoff
-            {
-            }
-            else if ( i == 36 )  // Delay time
-            {
-            }
-            else
-            {
-            }
-            // color code tuning and mix sliders
-            if ( i < 12 && ((i-2) % 4 == 0 || (i-3) % 4 == 0 ) || i == 16 )
-            {
-                juce::Colour colour = juce::Colours::darkgrey;
-                if (value < 64)
-                {
-                    colour = juce::Colours::darkred;
-                }
-                else if (value > 64)
-                {
-                    colour = juce::Colours::darkgreen;
-                }
-                slider->setColour(juce::Slider::trackColourId, colour);
-            }
-            // color code eq slider
-            if ( i == 14 )
-            {
-                juce::Colour colour = juce::Colours::darkgrey;
-                if (value < 128)
-                {
-                    colour = juce::Colours::darkred;
-                }
-                else if (value > 128)
-                {
-                    colour = juce::Colours::darkgreen;
-                }
-                slider->setColour(juce::Slider::trackColourId, colour);
-            }
+            DBG("Track " + std::to_string(trackNum));
+            DBG((tracksNameCCs[i]).name);
+            DBG(std::to_string((tracksNameCCs[i]).CC));
+            DBG(std::to_string(value));
+            DBG("");
+            sendCC(channel, (tracksNameCCs[i]).CC, value);
         }
     }
 }
@@ -405,6 +421,19 @@ void MainComponent::sendCC(int chan, int cc, int val)
     {
         auto msg = juce::MidiMessage::controllerEvent(chan, cc, val);
         midiOut->sendMessageNow(msg);
+    }
+    else
+    {
+        DBG("No active MIDI out!");
+    }
+}
+
+void MainComponent::sendPC(int chan, int pc)
+{
+    if (midiOut != nullptr)
+    {
+        //auto msg = juce::MidiMessage::programEvent(chan, pc);
+        //midiOut->sendMessageNow(msg);
     }
     else
     {

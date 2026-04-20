@@ -20,9 +20,11 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
+    void updateRadios(juce::Button* button, juce::String name);
     void buttonClicked(juce::Button* button) override;
     void sliderValueChanged(juce::Slider* slider) override;
     void sendCC(int chan, int cc, int val);
+    void sendPC(int chan, int pc);
     void handleIncomingMidiMessage(juce::MidiInput* source,
                                    const juce::MidiMessage& message) override;
 
@@ -43,33 +45,33 @@ private:
     // rotary sliders
     static const int slidersCount = 6*9;
     struct nameCC {
-        char name[3];
+        char name[4];
         int  CC;
     };
     nameCC tracksNameCCs[slidersCount] = {
         // track 1
         {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"LVL", 83},
         // track 2
-        {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"H", 2}, {"M", 22}, {"F", 12}, {"L", 34},
+        {"A1", 44}, {"A2", 54}, {"FX", 64}, {"P", 74}, {"LVL", 84},
         // track 3
-        {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"H", 3}, {"M", 23}, {"F", 13}, {"L", 35},
+        {"A1", 45}, {"A2", 55}, {"FX", 65}, {"P", 75}, {"LVL", 85},
         // track 4
-        {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"H", 4}, {"M", 24}, {"F", 14}, {"L", 36},
+        {"A1", 46}, {"A2", 56}, {"FX", 66}, {"P", 76}, {"LVL", 86},
         // track 5
-        {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"H", 5}, {"M", 25}, {"F", 15}, {"L", 37},
+        {"A1", 47}, {"A2", 57}, {"FX", 67}, {"P", 77}, {"LVL", 87},
         // track 6
-        {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
-        {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"1", 83},
+        {"H", 6}, {"M", 26}, {"F", 16}, {"L", 38},
+        {"A1", 48}, {"A2", 58}, {"FX", 68}, {"P", 78}, {"LVL", 88},
     };
     OwnedArray<Slider> slidersArray;
     OwnedArray<Label> labelsArray;
     // mute buttons
-    int mutesCCs[6] = {93, 93, 93, 93, 93, 93};
+    int mutesCCs[6] = {93, 94, 95, 102, 103, 104};
     OwnedArray<juce::TextButton> mutesArray;
     // global toggle buttons
     // scenes buttons
