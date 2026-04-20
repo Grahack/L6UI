@@ -55,17 +55,15 @@ MainComponent::MainComponent()
         addAndMakeVisible(*slidersArray[i]);
         int sliderType = i % 9;
         if (sliderType == 8)
-        {
-            // Level
+        {   // Level
             slidersArray[i]->setSliderStyle(juce::Slider::LinearVertical);
             slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 30);
         } else {
-            // Other rotaries
+            // Rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
             slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
             if (sliderType == 0 || sliderType == 1 || sliderType == 3)
-            {
-                // EQ
+            { // EQ
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
                     int v = static_cast<int>(value);
@@ -73,15 +71,13 @@ MainComponent::MainComponent()
                 };
             }
             if (sliderType == 4 || sliderType == 5 || sliderType == 6)
-            {
-                // Aux sends and FX
+            { // Aux sends and FX
                 slidersArray[i]->setValue(0, juce::dontSendNotification);
             } else {
                 slidersArray[i]->setValue(64, juce::dontSendNotification);
             }
             if (sliderType == 7)
-            {
-                // Pan
+            { // Pan
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
                     int v = static_cast<int>(value);
