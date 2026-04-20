@@ -179,25 +179,20 @@ void MainComponent::resized()
 {
     int internalMargin;  // margin between sections
     int headerHeight;    // channel and ports
-    int tracksHeight;
-    int buttonsHeight;
     if (false)
     {
         // total height is approx ?
         internalMargin = 25;
         headerHeight = 50;
-        tracksHeight = 600;
-        buttonsHeight = 30;
     } else {
         // total height is approx ?
         internalMargin = 10;
         headerHeight = 38;
-        tracksHeight = 580;
-        buttonsHeight = 30;
     }
 
     auto area = getLocalBounds();
     int totalW = area.getWidth();
+    int totalH = area.getHeight();
     auto headerArea = area.removeFromTop(headerHeight);
     channelSelector.setBounds(headerArea.removeFromLeft(totalW * 1 / 10));
     midiInputSelector.setBounds(headerArea.removeFromLeft(totalW * 4 / 10));
@@ -206,16 +201,16 @@ void MainComponent::resized()
     // some space
     area.removeFromTop(internalMargin);
     // Tracks section
-    int trackSpace = 20;
-    int trackWidth = (totalW - 5 * trackSpace) / 6;
-    int sliderHeight = tracksHeight - buttonsHeight;
-    int potHeight = sliderHeight / 8;
+    // We use a seventh strip for the global section, so we have 6 spaces
+    int trackSpace = totalW / 30;  // space between tracks
+    int trackWidth = (totalW - 6 * trackSpace) / 7;
+    int potsHeight = totalH / 9;  // 8 pots + 1 mute
+    int sliderHeight = totalH - potsHeight;  // space for the mute button
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
     if (mutesArray.size() < 6) return;
-    auto tracksArea = area.removeFromTop(tracksHeight);
-    auto slidersArea = tracksArea.removeFromTop(sliderHeight);
-    auto mutesArea = tracksArea.removeFromTop(buttonsHeight);
+    auto slidersArea = area.removeFromTop(sliderHeight);
+    auto mutesArea = area.removeFromTop(potsHeight);
     for (int i = 0; i < 6; i++)
     {
         auto trackArea = slidersArea.removeFromLeft(trackWidth);
@@ -223,34 +218,32 @@ void MainComponent::resized()
         auto potsArea = trackArea.removeFromLeft(trackWidth/2);
         for (int j = 0; j < 8; j++)
         {
-            slidersArray[9*i + j]->setBounds(potsArea.removeFromTop(potHeight));
+            slidersArray[9*i + j]->setBounds(potsArea.removeFromTop(potsHeight));
         }
         slidersArray[9*(i+1)-1]->setBounds(trackArea);
         auto muteArea = mutesArea.removeFromLeft(trackWidth);
         mutesArea.removeFromLeft(trackSpace);
         mutesArray[i]->setBounds(muteArea);
     }
-    // some space
-    area.removeFromTop(internalMargin);
     // Global section
-    int buttonsWidth = totalW / 11;
+    int buttonsHeight = slidersArea.getHeight() / 11;
     // Protect this section from a premature execution
     if (scenesArray.size() < 3) return;
     if (fxArray.size() < 5) return;
     // scenes
     for (int i = 0; i < 3; i++)
     {
-        scenesArray[i]->setBounds(area.removeFromLeft(buttonsWidth));
+        scenesArray[i]->setBounds(slidersArea.removeFromTop(buttonsHeight));
     }
-    area.removeFromLeft(buttonsWidth);
+    slidersArea.removeFromTop(buttonsHeight);
     // fx
     for (int i = 0; i < 5; i++)
     {
-        fxArray[i]->setBounds(area.removeFromLeft(buttonsWidth));
+        fxArray[i]->setBounds(slidersArea.removeFromTop(buttonsHeight));
     }
-    area.removeFromLeft(buttonsWidth);
+    slidersArea.removeFromTop(buttonsHeight);
     // compression
-    compButton.setBounds(area);
+    compButton.setBounds(slidersArea);
 }
 
 void MainComponent::refreshMidiPorts()
@@ -369,6 +362,7 @@ void MainComponent::buttonClicked(juce::Button* button)
         {
             juce::String stateString = state ? "unmute" : "mute";
             DBG(stateString + " track " + std::to_string(i+1));
+            sendCC(channel, mutesCCs[i], state ? 1 : 0);
         }
     }
     for (int i = 0; i < 3; i++)
