@@ -63,9 +63,18 @@ MainComponent::MainComponent()
             // Other rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
             slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
-            if (sliderType == 5 || sliderType == 6)
+            if (sliderType == 0 || sliderType == 1 || sliderType == 3)
             {
-                // Aux sends
+                // EQ
+                slidersArray[i]->textFromValueFunction = [](double value)
+                {
+                    int v = static_cast<int>(value);
+                    return juce::String(v - 64);
+                };
+            }
+            if (sliderType == 4 || sliderType == 5 || sliderType == 6)
+            {
+                // Aux sends and FX
                 slidersArray[i]->setValue(0, juce::dontSendNotification);
             } else {
                 slidersArray[i]->setValue(64, juce::dontSendNotification);
