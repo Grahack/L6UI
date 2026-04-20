@@ -205,45 +205,41 @@ void MainComponent::resized()
     int trackSpace = totalW / 30;  // space between tracks
     int trackWidth = (totalW - 6 * trackSpace) / 7;
     int potsHeight = totalH / 9;  // 8 pots + 1 mute
-    int sliderHeight = totalH - potsHeight;  // space for the mute button
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
     if (mutesArray.size() < 6) return;
-    auto slidersArea = area.removeFromTop(sliderHeight);
-    auto mutesArea = area.removeFromTop(potsHeight);
     for (int i = 0; i < 6; i++)
     {
-        auto trackArea = slidersArea.removeFromLeft(trackWidth);
-        slidersArea.removeFromLeft(trackSpace);
-        auto potsArea = trackArea.removeFromLeft(trackWidth/2);
+        auto trackArea = area.removeFromLeft(trackWidth);
+        auto potsSliderArea = trackArea.removeFromTop(8*potsHeight);
+        auto potsArea = potsSliderArea.removeFromLeft(trackWidth/2);
         for (int j = 0; j < 8; j++)
         {
             slidersArray[9*i + j]->setBounds(potsArea.removeFromTop(potsHeight));
         }
-        slidersArray[9*(i+1)-1]->setBounds(trackArea);
-        auto muteArea = mutesArea.removeFromLeft(trackWidth);
-        mutesArea.removeFromLeft(trackSpace);
-        mutesArray[i]->setBounds(muteArea);
+        slidersArray[9*(i+1)-1]->setBounds(potsSliderArea);
+        mutesArray[i]->setBounds(trackArea);
+        area.removeFromLeft(trackSpace);
     }
     // Global section
-    int buttonsHeight = slidersArea.getHeight() / 11;
+    int buttonsHeight = area.getHeight() / 11;
     // Protect this section from a premature execution
     if (scenesArray.size() < 3) return;
     if (fxArray.size() < 5) return;
     // scenes
     for (int i = 0; i < 3; i++)
     {
-        scenesArray[i]->setBounds(slidersArea.removeFromTop(buttonsHeight));
+        scenesArray[i]->setBounds(area.removeFromTop(buttonsHeight));
     }
-    slidersArea.removeFromTop(buttonsHeight);
+    area.removeFromTop(buttonsHeight);
     // fx
     for (int i = 0; i < 5; i++)
     {
-        fxArray[i]->setBounds(slidersArea.removeFromTop(buttonsHeight));
+        fxArray[i]->setBounds(area.removeFromTop(buttonsHeight));
     }
-    slidersArea.removeFromTop(buttonsHeight);
+    area.removeFromTop(buttonsHeight);
     // compression
-    compButton.setBounds(slidersArea);
+    compButton.setBounds(area);
 }
 
 void MainComponent::refreshMidiPorts()
