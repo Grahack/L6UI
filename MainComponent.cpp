@@ -359,15 +359,15 @@ void MainComponent::buttonClicked(juce::Button* button)
     }
     for (int i = 0; i < 3; i++)
     {
-        if (button == scenesArray[i])
+        if (state && button == scenesArray[i])
         {
-            DBG("scene " + std::to_string(i));
+            DBG("switch to scene " + std::to_string(i));
             sendPC(channel, i);
         }
     }
     for (int i = 0; i < 5; i++)
     {
-        if (button == fxArray[i])
+        if (state && button == fxArray[i])
         {
             DBG("FX " + std::to_string(i));
             sendCC(channel, fxCC, i);
