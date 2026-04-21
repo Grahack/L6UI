@@ -62,6 +62,8 @@ MainComponent::MainComponent()
             // Rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
             slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
+
+            slidersArray[i]->setLookAndFeel(&customLookAndFeel);
             if (sliderType == 0 || sliderType == 1 || sliderType == 3)
             { // EQ
                 slidersArray[i]->textFromValueFunction = [](double value)
