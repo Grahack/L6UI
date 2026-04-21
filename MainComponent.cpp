@@ -57,7 +57,7 @@ MainComponent::MainComponent()
         if (sliderType == 8)
         {   // Level
             slidersArray[i]->setSliderStyle(juce::Slider::LinearVertical);
-            slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 30);
+            slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
         } else {
             // Rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
