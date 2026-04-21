@@ -117,10 +117,8 @@ MainComponent::MainComponent()
         scenesArray[i]->setColour(juce::TextButton::buttonOnColourId,
                                   juce::Colours::darkgreen);
         scenesArray[i]->addListener(this);
+        scenesArray[i]->setClickingTogglesState(true);
         scenesArray[i]->setRadioGroupId (ScenesButtons);
-        scenesArray[i]->onClick = [this, i] {
-            updateRadios (scenesArray[i], "SC" + std::to_string(i));
-        };
         addAndMakeVisible(*scenesArray[i]);
     }
     scenesArray[0]->setToggleState(true, juce::dontSendNotification);
@@ -134,10 +132,8 @@ MainComponent::MainComponent()
         fxArray[i]->setColour(juce::TextButton::buttonOnColourId,
                               juce::Colours::darkgreen);
         fxArray[i]->addListener(this);
+        fxArray[i]->setClickingTogglesState(true);
         fxArray[i]->setRadioGroupId (FxButtons);
-        fxArray[i]->onClick = [this, i] {
-            updateRadios (fxArray[i], "FX" + std::to_string(i));
-        };
         addAndMakeVisible(*fxArray[i]);
     }
     fxArray[0]->setToggleState(true, juce::dontSendNotification);
@@ -347,13 +343,6 @@ void MainComponent::comboBoxChanged(juce::ComboBox* combo)
                 DBG("Could not open MIDI out: " + deviceInfo.name);
         }
     }
-}
-
-void MainComponent::updateRadios(juce::Button* button, juce::String name)
-{
-    auto state = button->getToggleState();
-    juce::String stateString = state ? "ON" : "OFF";
-    DBG (name + " Button changed to " + stateString);
 }
 
 void MainComponent::buttonClicked(juce::Button* button)
