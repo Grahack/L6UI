@@ -60,7 +60,7 @@ public:
         g.fillPath (p);
 
         // Value
-        g.setColour (Colours::black);
+        g.setColour (Colours::white);
         g.setFont (radius * 0.4f);
         g.drawSingleLineText (String (slider.getValue ()), centreX, height * 0.5f,
         Justification::centred);
