@@ -61,7 +61,7 @@ MainComponent::MainComponent()
         } else {
             // Rotaries
             slidersArray[i]->setSliderStyle(juce::Slider::Rotary);
-            slidersArray[i]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 30);
+            slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
             slidersArray[i]->setLookAndFeel(&customLookAndFeel);
             if (sliderType == 0 || sliderType == 1 || sliderType == 3)

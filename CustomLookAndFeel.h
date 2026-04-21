@@ -19,34 +19,57 @@ public:
         return Font(FontOptions(22.f, juce::Font::bold));
     }
 
-    void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-                           const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider&) override
+    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
+            const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
     {
-        auto radius = (float) juce::jmin (width / 2, height / 2) - 4.0f;
-        auto centreX = (float) x + (float) width  * 0.5f;
-        auto centreY = (float) y + (float) height * 0.5f;
+        // https://forum.juce.com/t/tip-how-to-include-value-and-label-on-rotaryknob-without-declaring-a-label/35926
+        auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
+        auto centreX = x + width * 0.4975f;
+        auto centreY = y + height * 0.44f;
         auto rx = centreX - radius;
         auto ry = centreY - radius;
-        auto rw = radius * 2.0f;
+        auto rw = radius * 2;
         auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        auto isMouseOver = slider.isMouseOverOrDragging () && slider.isEnabled ();
 
-        // fill
-        g.setColour (l6);
+        // Box and outline of knob area
+        g.setColour (slider.findColour (Slider::backgroundColourId));
+        g.fillRect (x, y, width, height);
+
+        g.setColour (Colour::fromRGB(16, 16, 16));
+        g.drawRect (x, y, width, height);
+
+        // Knob fill
+        g.setColour (slider.findColour (Slider::rotarySliderFillColourId).
+        withAlpha (isMouseOver ? 1.0f : 0.7f));
         g.fillEllipse (rx, ry, rw, rw);
 
-        // outline
-        g.setColour (l6_rotary_outline);
+        // Knob outline
+        g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId).
+        withAlpha (isMouseOver ? 1.0f : 0.7f));
         g.drawEllipse (rx, ry, rw, rw, 1.0f);
 
-        juce::Path p;
-        auto pointerLength = radius * 0.33f;
-        auto pointerThickness = 2.0f;
+        // Knob pointer
+        Path p;
+        auto pointerLength = radius * 0.5f;
+        auto pointerThickness = width * 0.05f;
         p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
-        p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
+        p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
 
-        // pointer
-        g.setColour (l6_rotary_pointer);
+        g.setColour (slider.findColour (Slider::thumbColourId));
         g.fillPath (p);
+
+        // Value
+        g.setColour (Colours::black);
+        g.setFont (radius * 0.4f);
+        g.drawSingleLineText (String (slider.getValue ()), centreX, height * 0.5f,
+        Justification::centred);
+
+        // Label
+        g.setColour (slider.findColour (Slider::textBoxTextColourId));
+        g.setFont (radius * 0.55f);
+        g.drawSingleLineText (slider.getProperties ()[slider.getComponentID()], centreX,
+ height * 0.985f, Justification::centred);
     }
 
     void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
