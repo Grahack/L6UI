@@ -215,7 +215,7 @@ void MainComponent::resized()
     {
         auto trackArea = area.removeFromLeft(trackWidth);
         auto potsSliderArea = trackArea.removeFromTop(8*potsHeight);
-        auto potsArea = potsSliderArea.removeFromLeft(trackWidth/2);
+        auto potsArea = potsSliderArea.removeFromLeft(trackWidth * 0.7);
         for (int j = 0; j < 8; j++)
         {
             slidersArray[9*i + j]->setBounds(potsArea.removeFromTop(potsHeight));
