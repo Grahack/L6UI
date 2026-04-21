@@ -418,8 +418,8 @@ void MainComponent::sendPC(int chan, int pc)
 {
     if (midiOut != nullptr)
     {
-        //auto msg = juce::MidiMessage::programEvent(chan, pc);
-        //midiOut->sendMessageNow(msg);
+        auto msg = juce::MidiMessage::programChange(chan, pc);
+        midiOut->sendMessageNow(msg);
     }
     else
     {
