@@ -70,7 +70,7 @@ public:
             text = juce::String(slider.getValue(), 2);
         g.drawSingleLineText (text,
                               centreX, height * 0.6f,
-                              Justification::centred);
+                              juce::Justification::horizontallyCentred);
     }
 
     void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
