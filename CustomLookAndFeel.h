@@ -19,8 +19,9 @@ public:
         return Font(FontOptions(22.f, juce::Font::bold));
     }
 
-    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
-            const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
+    void drawRotarySlider (Graphics& g, int x, int y, int width, int height,
+                           float sliderPos, const float rotaryStartAngle,
+                           const float rotaryEndAngle, Slider& slider) override
     {
         // https://forum.juce.com/t/tip-how-to-include-value-and-label-on-rotaryknob-without-declaring-a-label/35926
         auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
