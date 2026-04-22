@@ -63,11 +63,6 @@ public:
         // Value
         g.setColour (Colours::white);
         g.setFont (radius * 0.4f);
-        // Label
-        g.setColour (slider.findColour (Slider::textBoxTextColourId));
-        g.setFont (radius * 0.55f);
-        g.drawSingleLineText (slider.getProperties ()[slider.getComponentID()], centreX,
- height * 0.985f, Justification::centred);
         juce::String text;
         if (slider.textFromValueFunction != nullptr)
             text = slider.textFromValueFunction(slider.getValue());
