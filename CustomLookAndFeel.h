@@ -25,6 +25,7 @@ public:
     {
         // https://forum.juce.com/t/tip-how-to-include-value-and-label-on-rotaryknob-without-declaring-a-label/35926
         auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
+        radius = jmax (radius, 1.0d);
         auto centreX = x + width / 2;
         auto centreY = y + height / 2;
         auto rx = centreX - radius;
@@ -52,7 +53,7 @@ public:
         // Knob pointer
         Path p;
         auto pointerLength = radius * 0.5f;
-        auto pointerThickness = width * 0.05f;
+        auto pointerThickness = jmax (1.0f, width * 0.05f);
         p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
         p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
 
