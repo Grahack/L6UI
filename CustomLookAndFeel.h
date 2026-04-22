@@ -25,8 +25,8 @@ public:
     {
         // https://forum.juce.com/t/tip-how-to-include-value-and-label-on-rotaryknob-without-declaring-a-label/35926
         auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
-        auto centreX = x + width * 0.4975f;
-        auto centreY = y + height * 0.44f;
+        auto centreX = x + width / 2;
+        auto centreY = y + height / 2;
         auto rx = centreX - radius;
         auto ry = centreY - radius;
         auto rw = radius * 2;
@@ -41,8 +41,7 @@ public:
         g.drawRect (x, y, width, height);
 
         // Knob fill
-        g.setColour (slider.findColour (Slider::rotarySliderFillColourId).
-        withAlpha (isMouseOver ? 1.0f : 0.7f));
+        g.setColour (juce::Colours::black. withAlpha (isMouseOver ? 1.0f : 0.7f));
         g.fillEllipse (rx, ry, rw, rw);
 
         // Knob outline
@@ -62,7 +61,7 @@ public:
 
         // Value
         g.setColour (Colours::white);
-        g.setFont (radius * 0.4f);
+        g.setFont (radius * 0.7f);
         juce::String text;
         if (slider.textFromValueFunction != nullptr)
             text = slider.textFromValueFunction(slider.getValue());
