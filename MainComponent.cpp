@@ -109,6 +109,13 @@ MainComponent::MainComponent()
             }
         }
     }
+    const char* labels[] = {"H", "M", "F", "L", "A1", "A2", "FX", "P"};
+    for (int i = 0; i < slidersCount - 6 - 8; i++)
+    {
+        labelsArray.add(new juce::Label());
+        labelsArray[i]->setText (labels[i % 8], juce::dontSendNotification);
+        addAndMakeVisible(*labelsArray[i]);
+    }
     for (int i = 0; i < 6; i++)
     {
         mutesArray.add(new juce::TextButton(std::to_string(i+1)));
@@ -229,6 +236,7 @@ void MainComponent::resized()
     int potsHeight = totalH / 9;  // 8 pots + 1 mute
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
+    if (labelsArray.size() < slidersCount - 6 - 8) return;
     if (mutesArray.size() < 6) return;
     for (int i = 0; i < 6; i++)
     {
@@ -241,7 +249,14 @@ void MainComponent::resized()
         }
         slidersArray[9*(i+1)-1]->setBounds(potsSliderArea);
         mutesArray[i]->setBounds(trackArea);
-        area.removeFromLeft(trackSpace);
+        auto labelsArea = area.removeFromLeft(trackSpace);
+        if (i < 5)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                labelsArray[8*i + j]->setBounds(labelsArea.removeFromTop(potsHeight));
+            }
+        }
     }
     // Global section
     int buttonsHeight = area.getHeight() / 11;
