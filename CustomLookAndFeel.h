@@ -63,14 +63,19 @@ public:
         // Value
         g.setColour (Colours::white);
         g.setFont (radius * 0.4f);
-        g.drawSingleLineText (String (slider.getValue ()), centreX, height * 0.5f,
-        Justification::centred);
-
         // Label
         g.setColour (slider.findColour (Slider::textBoxTextColourId));
         g.setFont (radius * 0.55f);
         g.drawSingleLineText (slider.getProperties ()[slider.getComponentID()], centreX,
  height * 0.985f, Justification::centred);
+        juce::String text;
+        if (slider.textFromValueFunction != nullptr)
+            text = slider.textFromValueFunction(slider.getValue());
+        else
+            text = juce::String(slider.getValue(), 2);
+        g.drawSingleLineText (text,
+                              centreX, height * 0.6f,
+                              Justification::centred);
     }
 
     void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
