@@ -68,24 +68,43 @@ MainComponent::MainComponent()
             { // EQ
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
-                    int v = static_cast<int>(value);
-                    return juce::String(v - 64);
+                    int v = static_cast<int>(value * 100 / 63.5);
+                    return juce::String(v - 100);
                 };
             }
+            else if (sliderType == 2)
+            { // Mids freq from 100 to 8000Hz
+                slidersArray[i]->textFromValueFunction = [](double value)
+                {
+                    int m = 100;
+                    int M = 8000;
+                    int freq = m + value * (M-m)/127;
+                    int v = static_cast<int>(freq);
+                    return juce::String(v);
+                };
+            }
+            // no else here
             if (sliderType == 4 || sliderType == 5 || sliderType == 6)
             { // Aux sends and FX
                 slidersArray[i]->setValue(0, juce::dontSendNotification);
+                slidersArray[i]->textFromValueFunction = [](double value)
+                {
+                    int v = static_cast<int>(value * 100 /127);
+                    return juce::String(v);
+                };
             } else {
                 slidersArray[i]->setValue(64, juce::dontSendNotification);
+                // those already have a textFromValueFunction
             }
+            // no else here
             if (sliderType == 7)
             { // Pan
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
                     int v = static_cast<int>(value);
                     if (v == 64) return juce::String("C");
-                    if (v < 64)  return "L" + juce::String(64 - v);
-                    return "R" + juce::String(v - 64);
+                    if (v < 64)  return "L" + juce::String((64 - v) * 100 / 64);
+                    return "R" + juce::String((v - 64) * 100 / 63);
                 };
             }
         }
