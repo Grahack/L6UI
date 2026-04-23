@@ -84,6 +84,12 @@ MainComponent::MainComponent()
                 };
             }
             // no else here
+            if (sliderType == 4 || sliderType == 5 || sliderType == 7)
+            { // Aux sends and Pan
+                slidersArray[i]->setColour(Slider::backgroundColourId,
+                        juce::Colours::darkgrey);
+            }
+            // no else here
             if (sliderType == 4 || sliderType == 5 || sliderType == 6)
             { // Aux sends and FX
                 slidersArray[i]->setValue(0, juce::dontSendNotification);
