@@ -6,19 +6,12 @@ MainComponent::MainComponent()
 
     juce::Colour dark = juce::Colour (40, 40, 40);
     juce::Colour l6 = customLookAndFeel.l6;
+    juce::Colour buttonOn = customLookAndFeel.l6;
+    juce::Colour buttonOff = juce::Colours::darkgrey;
 
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, l6);
-    getLookAndFeel().setColour(juce::Slider::textBoxTextColourId,
-                               juce::Colours::white);
-    getLookAndFeel().setColour(juce::Slider::textBoxBackgroundColourId, dark);
-    getLookAndFeel().setColour(juce::Slider::trackColourId,
-                               juce::Colours::darkgrey);
+    getLookAndFeel().setColour(juce::Slider::trackColourId, l6);
     getLookAndFeel().setColour(juce::Slider::backgroundColourId,
                                juce::Colours::lightgrey);
-    getLookAndFeel().setColour(juce::TextButton::buttonColourId, dark);
-    customLookAndFeel.setColour(juce::Label::backgroundColourId, l6);
-    customLookAndFeel.setColour(juce::Label::textColourId,
-                               juce::Colours::black);
 
     // MIDI channel
     channel = 0;
@@ -145,10 +138,8 @@ MainComponent::MainComponent()
     for (int i = 0; i < 3; i++)
     {
         scenesArray.add(new juce::TextButton(scenesTxt[i]));
-        scenesArray[i]->setColour(juce::TextButton::buttonColourId,
-                                  juce::Colours::darkred);
-        scenesArray[i]->setColour(juce::TextButton::buttonOnColourId,
-                                  juce::Colours::darkgreen);
+        scenesArray[i]->setColour(juce::TextButton::buttonColourId, buttonOff);
+        scenesArray[i]->setColour(juce::TextButton::buttonOnColourId, buttonOn);
         scenesArray[i]->addListener(this);
         scenesArray[i]->setClickingTogglesState(true);
         scenesArray[i]->setRadioGroupId (ScenesButtons);
@@ -160,10 +151,8 @@ MainComponent::MainComponent()
     for (int i = 0; i < 5; i++)
     {
         fxArray.add(new juce::TextButton(fxTxt[i]));
-        fxArray[i]->setColour(juce::TextButton::buttonColourId,
-                              juce::Colours::darkred);
-        fxArray[i]->setColour(juce::TextButton::buttonOnColourId,
-                              juce::Colours::darkgreen);
+        fxArray[i]->setColour(juce::TextButton::buttonColourId, buttonOff);
+        fxArray[i]->setColour(juce::TextButton::buttonOnColourId, buttonOn);
         fxArray[i]->addListener(this);
         fxArray[i]->setClickingTogglesState(true);
         fxArray[i]->setRadioGroupId (FxButtons);
@@ -174,10 +163,8 @@ MainComponent::MainComponent()
     compButton.setButtonText("COMP");
     compButton.setClickingTogglesState(true);
     compButton.setToggleState(false, juce::dontSendNotification);
-    compButton.setColour(juce::TextButton::buttonColourId,
-                         juce::Colours::darkred);
-    compButton.setColour(juce::TextButton::buttonOnColourId,
-                             juce::Colours::darkgreen);
+    compButton.setColour(juce::TextButton::buttonColourId, buttonOff);
+    compButton.setColour(juce::TextButton::buttonOnColourId, buttonOn);
     compButton.addListener(this);
     addAndMakeVisible(compButton);
 

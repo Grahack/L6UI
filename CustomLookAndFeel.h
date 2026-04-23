@@ -6,7 +6,6 @@ public:
 
     CustomLookAndFeel()
     {
-        setColour (juce::ComboBox::backgroundColourId, l6);
         setColour (juce::ComboBox::arrowColourId, juce::Colours::black);
         setColour (juce::ComboBox::textColourId, juce::Colours::black);
         setColour (juce::ComboBox::outlineColourId, juce::Colours::black);
