@@ -120,6 +120,7 @@ MainComponent::MainComponent()
     {
         labelsArray.add(new juce::Label());
         labelsArray[i]->setText (labels[i % 8], juce::dontSendNotification);
+        labelsArray[i]->setJustificationType(juce::Justification::centred);
         addAndMakeVisible(*labelsArray[i]);
     }
     for (int i = 0; i < 6; i++)
