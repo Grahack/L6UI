@@ -73,41 +73,6 @@ public:
                               juce::Justification::horizontallyCentred);
     }
 
-    void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
-                               bool, bool isButtonDown) override
-    {
-        auto buttonArea = button.getLocalBounds();
-        auto edge = 4;
-
-        buttonArea.removeFromLeft (edge);
-        buttonArea.removeFromTop (edge);
-
-        // shadow
-        g.setColour (juce::Colours::darkgrey.withAlpha (0.5f));
-        g.fillRect (buttonArea);
-
-        auto offset = isButtonDown ? -edge / 2 : -edge;
-        buttonArea.translate (offset, offset);
-
-        g.setColour (backgroundColour);
-        g.fillRect (buttonArea);
-    }
-
-    void drawLabel(Graphics& g, Label& label) override
-    {
-        g.fillAll(label.findColour(Label::backgroundColourId));
-        g.setColour(label.findColour(Label::textColourId));
-        g.setFont(label.getFont());
-        g.drawText(label.getText(), label.getLocalBounds(),
-                   label.getJustificationType(),
-                   true);
-        if (!isLabelInComboBox(label))
-        {
-            g.setColour(juce::Colours::black);
-            g.drawRect(label.getLocalBounds(), 1);
-        }
-    }
-
 private:
     bool isLabelInComboBox(juce::Label& label)
     {
