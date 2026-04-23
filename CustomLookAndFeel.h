@@ -3,8 +3,6 @@ class CustomLookAndFeel : public juce::LookAndFeel_V4
 public:
 
     const juce::Colour l6 = juce::Colour (0xff00aaff);
-    const juce::Colour l6_rotary_outline = juce::Colours::white;
-    const juce::Colour l6_rotary_pointer = juce::Colours::black;
 
     CustomLookAndFeel()
     {
