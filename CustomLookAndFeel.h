@@ -2,7 +2,7 @@ class CustomLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
 
-    const juce::Colour l6 = juce::Colour (0xff00aaff);
+    const juce::Colour l6 = juce::Colour (0xff0033aa);
 
     CustomLookAndFeel()
     {
