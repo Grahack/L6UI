@@ -27,7 +27,7 @@ public:
         auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
         radius = jmax (radius, 1.0d);
         auto centreX = x + width / 2;
-        auto centreY = y + height / 2;
+        auto centreY = y + height / 2 + height / 30;
         auto rx = centreX - radius;
         auto ry = centreY - radius;
         auto rw = radius * 2;
