@@ -110,7 +110,7 @@ MainComponent::MainComponent()
         }
     }
     const char* labels[] = {"H", "M", "F", "L", "A1", "A2", "FX", "P"};
-    for (int i = 0; i < slidersCount - 6 - 8; i++)
+    for (int i = 0; i < labelsCount; i++)
     {
         labelsArray.add(new juce::Label());
         labelsArray[i]->setText (labels[i % 8], juce::dontSendNotification);
@@ -236,7 +236,7 @@ void MainComponent::resized()
     int potsHeight = totalH / 9;  // 8 pots + 1 mute
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
-    if (labelsArray.size() < slidersCount - 6 - 8) return;
+    if (labelsArray.size() < labelsCount) return;
     if (mutesArray.size() < 6) return;
     for (int i = 0; i < 6; i++)
     {

@@ -44,6 +44,7 @@ private:
     // tracks section
     // rotary sliders
     static const int slidersCount = 6*9;
+    static const int labelsCount = 5*8;  // 8 labels between the tracks
     struct nameCC {
         char name[4];
         int  CC;
