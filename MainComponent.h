@@ -50,6 +50,7 @@ private:
         int  CC;
     };
     nameCC tracksNameCCs[slidersCount] = {
+        // Names are just here for convenience, they are not used in the code
         // track 1
         {"H", 1}, {"M", 21}, {"F", 11}, {"L", 33},
         {"A1", 43}, {"A2", 53}, {"FX", 63}, {"P", 73}, {"LVL", 83},
