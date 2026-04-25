@@ -399,7 +399,7 @@ void MainComponent::buttonClicked(juce::Button* button)
         if (state && button == fxArray[i])
         {
             DBG("FX " + std::to_string(i));
-            sendCC(channel, fxCC, i);
+            sendCC(channel, fxCC, fxValues[i]);
         }
     }
     if (button == &compButton)
@@ -497,11 +497,17 @@ void MainComponent::handleIncomingMidiMessage(juce::MidiInput* source,
                     return;
                 }
             }
-            // or is it an fx button?
-            if (CC == 117 and value < 5)
+            // look for an fx
+            if (CC == 117)
             {
-                fxArray[value]->setToggleState(true, dsn);
-                return;
+                for (int i = 0; i < 5; i++)
+                {
+                    if (value == fxValues[i])
+                    {
+                        fxArray[i]->setToggleState(true, dsn);
+                        return;
+                    }
+                }
             }
             // or is it the comp button?
             if (CC == 119)

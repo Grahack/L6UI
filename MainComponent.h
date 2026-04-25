@@ -81,6 +81,7 @@ private:
     OwnedArray<juce::TextButton> scenesArray;
     // FX buttons
     int fxCC =  117;
+    int fxValues[6] = {0, 26, 51, 77, 102};
     OwnedArray<juce::TextButton> fxArray;
     // comp button
     int compCC = 119;
