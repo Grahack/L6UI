@@ -407,7 +407,7 @@ void MainComponent::buttonClicked(juce::Button* button)
         int value = button->getToggleState() ? 1 : 0;
         juce::String stateString = state ? "on" : "off";
         DBG("comp " + stateString);
-        int ccValue = state ? 1 : 0;
+        int ccValue = state ? 127 : 0;
         sendCC(channel, compCC, ccValue);
     }
 }
