@@ -58,7 +58,7 @@ MainComponent::MainComponent()
             slidersArray[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
             slidersArray[i]->setLookAndFeel(&customLookAndFeel);
-            if (sliderType == 0 || sliderType == 1 || sliderType == 3)
+            if (sliderType == 0 || sliderType == 2 || sliderType == 3)
             { // EQ
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
@@ -66,7 +66,7 @@ MainComponent::MainComponent()
                     return juce::String(v - 100);
                 };
             }
-            else if (sliderType == 2)
+            else if (sliderType == 1)
             { // Mids freq from 100 to 8000Hz
                 slidersArray[i]->textFromValueFunction = [](double value)
                 {
@@ -109,7 +109,7 @@ MainComponent::MainComponent()
             }
         }
     }
-    const char* labels[] = {"H", "M", "F", "L", "A1", "A2", "FX", "P"};
+    const char* labels[] = {"H", "F", "M", "L", "A1", "A2", "FX", "P"};
     for (int i = 0; i < labelsCount; i++)
     {
         labelsArray.add(new juce::Label());
