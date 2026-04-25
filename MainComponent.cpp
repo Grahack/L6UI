@@ -460,6 +460,48 @@ void MainComponent::handleIncomingMidiMessage(juce::MidiInput* source,
                                               const juce::MidiMessage& message)
 {
     DBG("Received MIDI message: " + message.getDescription());
-    if (message.isSysEx()) return;
-
+    if (message.isSysEx() || ! message.isForChannel(channel)) return;
+    if (message.isProgramChange())
+    {
+        DBG("Received PC");
+        int n = message.getProgramChangeNumber();
+        scenesArray[n]->setToggleState(true, juce::dontSendNotification);
+    }
+    if (message.isController())
+    {
+        DBG("Received CC");
+        int CC = message.getControllerNumber();
+        int value = message.getControllerValue();
+        // look for a slider
+        for (int i = 0; i < slidersCount; i++)
+        {
+            if (CC == tracksNameCCs[i].CC)
+            {
+                slidersArray[i]->setValue(value);
+                return;
+            }
+        }
+        bool state  = (value > 0)? true : false;
+        // look for a mute
+        for (int i = 0; i < 6; i++)
+        {
+            if (CC == mutesCCs[i])
+            {
+                mutesArray[i]->setToggleState(state, juce::dontSendNotification);
+                return;
+            }
+        }
+        // or is it an fx button?
+        if (CC == 117 and value < 5)
+        {
+            fxArray[value]->setToggleState(true, juce::dontSendNotification);
+            return;
+        }
+        // or is it the comp button?
+        if (CC == 119)
+        {
+            compButton.setToggleState(state, juce::dontSendNotification);
+            return;
+        }
+    }
 }
