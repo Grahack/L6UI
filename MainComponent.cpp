@@ -121,11 +121,11 @@ MainComponent::MainComponent()
     {
         mutesArray.add(new juce::TextButton(std::to_string(i+1)));
         mutesArray[i]->setClickingTogglesState(true);
-        mutesArray[i]->setToggleState(true, juce::dontSendNotification);
+        mutesArray[i]->setToggleState(false, juce::dontSendNotification);
         mutesArray[i]->setColour(juce::TextButton::buttonColourId,
-                                 juce::Colours::darkred);
-        mutesArray[i]->setColour(juce::TextButton::buttonOnColourId,
                                  juce::Colours::darkgreen);
+        mutesArray[i]->setColour(juce::TextButton::buttonOnColourId,
+                                 juce::Colours::darkred);
         mutesArray[i]->addListener(this);
         addAndMakeVisible(*mutesArray[i]);
     }
@@ -381,9 +381,9 @@ void MainComponent::buttonClicked(juce::Button* button)
     {
         if (button == mutesArray[i])
         {
-            juce::String stateString = state ? "unmute" : "mute";
+            juce::String stateString = state ? "mute" : "unmute";
             DBG(stateString + " track " + std::to_string(i+1));
-            sendCC(channel, mutesCCs[i], state ? 1 : 0);
+            sendCC(channel, mutesCCs[i], state ? 127 : 0);
         }
     }
     for (int i = 0; i < 3; i++)
