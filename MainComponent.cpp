@@ -23,7 +23,8 @@ MainComponent::MainComponent()
     {
         channelSelector.addItem("CHAN " + std::to_string(i), i+1);
     }
-    channelSelector.setSelectedId(1);
+    // in my setup L6 is channel 6, technical chan is 5 but at the 6th position
+    channelSelector.setSelectedId(6);
 
     // MIDI in/out
     midiInputSelector.addListener(this);
