@@ -1,3 +1,7 @@
+#include <JuceHeader.h>
+
+using namespace juce;
+
 class CustomLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
@@ -11,9 +15,9 @@ public:
         setColour (juce::ComboBox::outlineColourId, juce::Colours::black);
     }
 
-    Font getComboBoxFont (ComboBox& box) override
+    juce::Font getComboBoxFont(juce::ComboBox&) override
     {
-        return Font(FontOptions(22.f, juce::Font::bold));
+        return juce::Font(juce::FontOptions(22.0f, juce::Font::bold));
     }
 
     void drawRotarySlider (Graphics& g, int x, int y, int width, int height,
@@ -21,8 +25,8 @@ public:
                            const float rotaryEndAngle, Slider& slider) override
     {
         // https://forum.juce.com/t/tip-how-to-include-value-and-label-on-rotaryknob-without-declaring-a-label/35926
-        auto radius = jmin (width / 2.25, height / 2.25) - 4.5;
-        radius = jmax (radius, 1.0d);
+        auto radius = juce::jmin(width / 2.25f, height / 2.25f) - 4.5f;
+        radius = juce::jmax(radius, 1.0f);
         auto centreX = x + width / 2;
         auto centreY = y + height / 2 + height / 30;
         auto rx = centreX - radius;
@@ -33,14 +37,14 @@ public:
 
         // Box and outline of knob area
         g.setColour (slider.findColour (Slider::backgroundColourId));
-        g.fillRect (x, y, width, height);
+        g.fillRect ((float)x, (float)y, (float)width, (float)height);
 
         g.setColour (Colour::fromRGB(16, 16, 16));
-        g.drawRect (x, y, width, height);
+        g.drawRect ((float)x, (float)y, (float)width, (float)height);
 
         // Knob fill
-        g.setColour (juce::Colours::black. withAlpha (isMouseOver ? 1.0f : 0.7f));
-        g.fillEllipse (rx, ry, rw, rw);
+        g.setColour (juce::Colours::black.withAlpha (isMouseOver ? 1.0f : 0.7f));
+        g.fillEllipse ((float)rx, (float)ry, (float)rw, (float)rw);
 
         // Knob outline
         g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId).
@@ -50,7 +54,7 @@ public:
         // Knob pointer
         Path p;
         auto pointerLength = radius * 0.5f;
-        auto pointerThickness = jmax (1.0f, width * 0.05f);
+        auto pointerThickness = juce::jmax(1.0f, (float)width * 0.05f);
         p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
         p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
 
@@ -65,9 +69,10 @@ public:
             text = slider.textFromValueFunction(slider.getValue());
         else
             text = juce::String(slider.getValue(), 2);
-        g.drawSingleLineText (text,
-                              centreX, height * 0.6f,
-                              juce::Justification::horizontallyCentred);
+        g.drawSingleLineText(text,
+            (int)centreX,
+            (int)(height * 0.6f),
+            juce::Justification::horizontallyCentred);
     }
 
 private:
