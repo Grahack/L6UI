@@ -462,6 +462,7 @@ void MainComponent::handleIncomingMidiMessage(juce::MidiInput* source,
                                               const juce::MidiMessage& message)
 {
     DBG("Received MIDI message: " + message.getDescription());
+    return;
     if (message.isSysEx() || ! message.isForChannel(channel)) return;
     // Lock thing is to prevent
     // JUCE Assertion failure in juce_Component.cpp:1658
