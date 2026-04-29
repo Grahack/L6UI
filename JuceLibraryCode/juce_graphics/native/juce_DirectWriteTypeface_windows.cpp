@@ -130,6 +130,11 @@ public:
         return fromFont (dwFont, customFontCollection, nullptr, MetricsMechanism::gdiWithDwriteFallback);
     }
 
+    Native getNativeDetails() const override
+    {
+        return Native { hbFont.get(), nonPortableMetrics };
+    }
+
     Typeface::Ptr createSystemFallback (const String& c, const String& language) const override
     {
         auto factory = factories->getDWriteFactory().getInterface<IDWriteFactory2>();
@@ -145,8 +150,7 @@ public:
         if (FAILED (factory->GetSystemFontFallback (fallback.resetAndGetPointerAddress())) || fallback == nullptr)
             return {};
 
-        ComSmartPtr analysisSource { new AnalysisSource (c, language), IncrementRef::no };
-
+        auto analysisSource = becomeComSmartPtrOwner (new AnalysisSource (c, language));
         const auto originalName = getLocalisedFamilyName (*dwFont);
 
         const auto mapped = factories->getFonts().mapCharacters (fallback,
@@ -165,11 +169,6 @@ public:
     }
 
     ComSmartPtr<IDWriteFontFace> getIDWriteFontFace() const { return dwFontFace; }
-
-    const Native* getNativeDetails() const override
-    {
-        return native.get();
-    }
 
     static Typeface::Ptr findSystemTypeface()
     {
@@ -295,7 +294,8 @@ private:
           collection (std::move (collectionIn)),
           dwFont (font),
           dwFontFace (face),
-          native (std::make_unique<Native> (TypefaceNativeOptions { std::move (hbFontIn), metrics }))
+          hbFont (std::move (hbFontIn)),
+          nonPortableMetrics (metrics)
     {
         if (collection != nullptr)
             factories->getFonts().addCollection (collection);
@@ -340,9 +340,8 @@ private:
         const auto name = getLocalisedFamilyName (*dwFont);
         const auto style = getLocalisedStyle (*dwFont);
 
-        HbFace hbFace { hb_directwrite_face_create (dwFace), IncrementRef::no };
-        HbFont font { hb_font_create (hbFace.get()), IncrementRef::no };
-
+        const HbFace hbFace { hb_directwrite_face_create (dwFace) };
+        HbFont font { hb_font_create (hbFace.get()) };
         const auto dwMetrics = getDwriteMetrics (*dwFace);
 
         const auto metrics = mm == MetricsMechanism::gdiWithDwriteFallback
@@ -411,7 +410,8 @@ private:
     ComSmartPtr<IDWriteFontCollection> collection;
     ComSmartPtr<IDWriteFont> dwFont;
     ComSmartPtr<IDWriteFontFace> dwFontFace;
-    std::unique_ptr<Native> native;
+    HbFont hbFont;
+    TypefaceAscentDescent nonPortableMetrics;
 };
 
 struct DefaultFontNames

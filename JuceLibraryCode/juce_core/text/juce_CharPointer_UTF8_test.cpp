@@ -42,17 +42,15 @@ public:
 
     void runTest() final
     {
-        using Utf8Vector = std::vector<CharPointer_UTF8::CharType>;
-
         beginTest ("String validation - empty string / null-terminator");
         {
-            const Utf8Vector string { '\0' };
+            const std::vector<CharPointer_UTF8::CharType> string { '\0' };
             expect (CharPointer_UTF8::isValidString (string.data(), (int) string.size()));
         }
 
         beginTest ("String validation - ascii");
         {
-            const Utf8Vector string { 'T', 'e', 's', 'T', '!', '\0' }; // Test!
+            const std::vector<CharPointer_UTF8::CharType> string { 'T', 'e', 's', 'T', '!', '\0' }; // Test!
             expect (CharPointer_UTF8::isValidString (string.data(), (int) string.size()));
         }
 
@@ -60,19 +58,19 @@ public:
 
         beginTest ("String validation - continuation characters are invalid when not proceeded by the correct bytes");
         {
-            const Utf8Vector string { continuationCharacter };
+            const std::vector<CharPointer_UTF8::CharType> string { continuationCharacter };
             expect (! CharPointer_UTF8::isValidString (string.data(), (int) string.size()));
         }
 
         beginTest ("String validation - characters after a null terminator are ignored");
         {
-            const Utf8Vector string { 'T', 'e', 's', 'T', '\0', continuationCharacter };
+            const std::vector<CharPointer_UTF8::CharType> string { 'T', 'e', 's', 'T', '\0', continuationCharacter };
             expect (CharPointer_UTF8::isValidString (string.data(), (int) string.size()));
         }
 
         beginTest ("String validation - characters exceeding max bytes are ignored");
         {
-            const Utf8Vector string { 'T', 'e', 's', 'T', continuationCharacter };
+            const std::vector<CharPointer_UTF8::CharType> string { 'T', 'e', 's', 'T', continuationCharacter };
             expect (CharPointer_UTF8::isValidString (string.data(), 4));
         }
 

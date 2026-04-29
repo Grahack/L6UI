@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Muhammad Tayyab Akram
+ * Copyright (C) 2014-2019 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-#include <juce_graphics/unicode/sheenbidi/Headers/SheenBidi/SBConfig.h>
+#include <juce_graphics/unicode/sheenbidi/Headers/SBConfig.h>
 
 #ifdef SB_CONFIG_LOG
 
-#include "BidiChain.h"
-#include "IsolatingRun.h"
-#include "LevelRun.h"
 #include "SBBase.h"
-#include "SBCodepoint.h"
-#include "SBCodepointSequence.h"
+#include "SBBidiChain.h"
+#include "SBBidiType.h"
+#include "SBIsolatingRun.h"
 #include "SBLog.h"
 
 int _SBLogPosition = 0;
@@ -248,7 +246,7 @@ static void PrintTypesOperation(IsolatingRunRef isolatingRun, IsolatingContext *
 SB_INTERNAL void PrintRunTypes(IsolatingRunRef isolatingRun)
 {
     IsolatingContext context;
-    IsolatingRunForEach(isolatingRun, &context, PrintTypesOperation);
+    IsolatingRunForEach(isolatingRun, &context, _SBPrintTypesOperation);
 }
 
 static void PrintLevelsOperation(IsolatingRunRef isolatingRun, IsolatingContext *context)
@@ -264,7 +262,7 @@ static void PrintLevelsOperation(IsolatingRunRef isolatingRun, IsolatingContext 
 SB_INTERNAL void PrintRunLevels(IsolatingRunRef isolatingRun)
 {
     IsolatingContext context;
-    IsolatingRunForEach(isolatingRun, &context, PrintLevelsOperation);
+    IsolatingRunForEach(isolatingRun, &context, _SBPrintLevelsOperation);
 }
 
 typedef struct {
@@ -297,7 +295,7 @@ SB_INTERNAL void PrintRunRange(IsolatingRunRef isolatingRun)
     IsolatingContext context;
     context.object = &range;
 
-    IsolatingRunForEach(isolatingRun, &context, PrintRangeOperation);
+    IsolatingRunForEach(isolatingRun, &context, _SBPrintRangeOperation);
     SB_LOG_RANGE(range.offset, range.length);
     SB_LOG_DIVIDER(1);
 }

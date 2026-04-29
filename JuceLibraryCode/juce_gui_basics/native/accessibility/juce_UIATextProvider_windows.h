@@ -194,7 +194,7 @@ private:
     public:
         UIATextRangeProvider (UIATextProvider& textProvider, Range<int> range)
             : UIAProviderBase (textProvider.getHandler().getNativeImplementation()),
-              owner (&textProvider, IncrementRef::yes),
+              owner (addComSmartPtrOwner (&textProvider)),
               selectionRange (range)
         {
         }

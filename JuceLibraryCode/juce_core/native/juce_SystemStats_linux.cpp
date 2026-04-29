@@ -32,6 +32,10 @@
   ==============================================================================
 */
 
+#if JUCE_BELA
+extern "C" int cobalt_thread_mode();
+#endif
+
 namespace juce
 {
 
@@ -43,11 +47,10 @@ static String getCpuInfo (const char* key)
 
 static String getLocaleValue (nl_item key)
 {
-    const String oldLocale { ::setlocale (LC_ALL, nullptr) };
-    const ScopeGuard restore { [oldLocale] { ::setlocale (LC_ALL, oldLocale.toRawUTF8()); } };
-
-    ::setlocale (LC_ALL, ""); // restore locale from env
-    return String::fromUTF8 (nl_langinfo (key));
+    auto oldLocale = ::setlocale (LC_ALL, "");
+    auto result = String::fromUTF8 (nl_langinfo (key));
+    ::setlocale (LC_ALL, oldLocale);
+    return result;
 }
 #endif
 
@@ -73,6 +76,7 @@ bool SystemStats::isOperatingSystem64Bit()
    #if JUCE_64BIT
     return true;
    #else
+    //xxx not sure how to find this out?..
     return false;
    #endif
 }
@@ -380,7 +384,14 @@ int64 Time::getHighResolutionTicks() noexcept
 {
     timespec t;
 
+   #if JUCE_BELA
+    if (cobalt_thread_mode() == 0x200 /*XNRELAX*/)
+        clock_gettime (CLOCK_MONOTONIC, &t);
+    else
+        __wrap_clock_gettime (CLOCK_MONOTONIC, &t);
+   #else
     clock_gettime (CLOCK_MONOTONIC, &t);
+   #endif
 
     return (t.tv_sec * (int64) 1000000) + (t.tv_nsec / 1000);
 }

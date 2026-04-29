@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 Muhammad Tayyab Akram
+ * Copyright (C) 2018-2022 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "GeneralCategoryLookup.h"
-#include "Object.h"
 #include "PairingLookup.h"
 #include "SBBase.h"
-#include "SBCodepoint.h"
 #include "SBCodepointSequence.h"
 #include "ScriptLookup.h"
 #include "ScriptStack.h"
@@ -35,11 +34,9 @@ static SBBoolean IsSimilarScript(SBScript lhs, SBScript rhs)
 
 SBScriptLocatorRef SBScriptLocatorCreate(void)
 {
-    const SBUInteger size = sizeof(SBScriptLocator);
-    void *pointer = NULL;
+    SBScriptLocatorRef locator = malloc(sizeof(SBScriptLocator));
 
-    if (ObjectCreate(&size, 1, &pointer)) {
-        SBScriptLocatorRef locator = pointer;
+    if (locator) {
         locator->_codepointSequence.stringEncoding = SBStringEncodingUTF8;
         locator->_codepointSequence.stringBuffer = NULL;
         locator->_codepointSequence.stringLength = 0;
@@ -48,7 +45,7 @@ SBScriptLocatorRef SBScriptLocatorCreate(void)
         SBScriptLocatorReset(locator);
     }
 
-    return pointer;
+    return locator;
 }
 
 void SBScriptLocatorLoadCodepoints(SBScriptLocatorRef locator, const SBCodepointSequence *codepointSequence)
@@ -174,6 +171,6 @@ SBScriptLocatorRef SBScriptLocatorRetain(SBScriptLocatorRef locator)
 void SBScriptLocatorRelease(SBScriptLocatorRef locator)
 {
     if (locator && --locator->retainCount == 0) {
-        ObjectDispose(&locator->_object);
+        free(locator);
     }
 }

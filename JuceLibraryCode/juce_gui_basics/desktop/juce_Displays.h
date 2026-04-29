@@ -44,7 +44,7 @@ namespace juce
 class JUCE_API  Displays
 {
 private:
-    Displays (const Desktop&);
+    Displays (Desktop&);
 
 public:
     //==============================================================================
@@ -232,8 +232,8 @@ public:
 private:
     friend class Desktop;
 
-    void init (const Desktop&);
-    void findDisplays (const Desktop& desktop);
+    void init (Desktop&);
+    void findDisplays (float masterScale);
 
     void updateToLogical();
 

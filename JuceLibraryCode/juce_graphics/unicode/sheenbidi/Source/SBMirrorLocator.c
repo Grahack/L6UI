@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Muhammad Tayyab Akram
+ * Copyright (C) 2014-2022 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,25 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 
-#include "Object.h"
 #include "PairingLookup.h"
 #include "SBBase.h"
-#include "SBCodepoint.h"
 #include "SBLine.h"
 #include "SBMirrorLocator.h"
 
 SBMirrorLocatorRef SBMirrorLocatorCreate(void)
 {
-    const SBUInteger size = sizeof(SBMirrorLocator);
-    void *pointer = NULL;
+    SBMirrorLocatorRef locator = malloc(sizeof(SBMirrorLocator));
 
-    if (ObjectCreate(&size, 1, &pointer)) {
-        SBMirrorLocatorRef locator = pointer;
+    if (locator) {
         locator->_line = NULL;
         locator->retainCount = 1;
 
         SBMirrorLocatorReset(locator);
     }
 
-    return pointer;
+    return locator;
 }
 
 void SBMirrorLocatorLoadLine(SBMirrorLocatorRef locator, SBLineRef line, void *stringBuffer)
@@ -121,6 +118,6 @@ void SBMirrorLocatorRelease(SBMirrorLocatorRef locator)
 {
     if (locator && --locator->retainCount == 0) {
         SBLineRelease(locator->_line);
-        ObjectDispose(&locator->_object);
+        free(locator);
     }
 }

@@ -214,13 +214,13 @@ private:
 
         static FileChooserControllerClass* oldFn (int flags, const StringArray& validExtensions)
         {
-            const auto utTypes { std::invoke ([&]() -> StringArray
+            const NSUniquePtr<NSArray> utTypeArray { std::invoke ([&]
             {
                 if ((flags & FileBrowserComponent::canSelectDirectories) != 0)
-                    return { "public.folder" };
+                    return @[@"public.folder"];
 
                 if (validExtensions.isEmpty())
-                    return { "public.data" };
+                    return @[@"public.data"];
 
                 StringArray result;
 
@@ -237,11 +237,11 @@ private:
                     JUCE_END_IGNORE_WARNINGS_GCC_LIKE
                 }
 
-                return result;
+                return createNSArrayFromStringArray (result);
             }) };
 
             JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
-            return [[FileChooserControllerClass alloc] initWithDocumentTypes: createNSArrayFromStringArray (utTypes) inMode: UIDocumentPickerModeOpen];
+            return [[FileChooserControllerClass alloc] initWithDocumentTypes: utTypeArray.get() inMode: UIDocumentPickerModeOpen];
             JUCE_END_IGNORE_WARNINGS_GCC_LIKE
         }
     };

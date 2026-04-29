@@ -41,20 +41,19 @@ namespace jpeglibNamespace
 {
 #if JUCE_INCLUDE_JPEGLIB_CODE || ! defined (JUCE_INCLUDE_JPEGLIB_CODE)
      JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wconversion",
-                                          "-Wcast-align",
-                                          "-Wcomma",
-                                          "-Wdeprecated-declarations",
                                           "-Wdeprecated-register",
-                                          "-Wformat-nonliteral",
-                                          "-Wimplicit-fallthrough",
-                                          "-Wredundant-decls",
-                                          "-Wregister",
-                                          "-Wshift-negative-value",
+                                          "-Wdeprecated-declarations",
                                           "-Wsign-conversion",
-                                          "-Wswitch-default",
+                                          "-Wcast-align",
                                           "-Wswitch-enum",
+                                          "-Wswitch-default",
+                                          "-Wimplicit-fallthrough",
+                                          "-Wzero-as-null-pointer-constant",
+                                          "-Wshift-negative-value",
+                                          "-Wcomma",
                                           "-Wunused-parameter",
-                                          "-Wzero-as-null-pointer-constant")
+                                          "-Wregister",
+                                          "-Wredundant-decls")
 
     #define DONT_USE_EXTERN_C
     #include "jpglib/jaricom.c"

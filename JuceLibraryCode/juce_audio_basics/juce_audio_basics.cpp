@@ -101,17 +101,16 @@
 #include "sources/juce_PositionableAudioSource.cpp"
 #include "synthesisers/juce_Synthesiser.cpp"
 #include "audio_play_head/juce_AudioPlayHead.cpp"
-#include "utilities/juce_AudioWorkgroup.cpp"
-
+#include "midi/juce_MidiDataConcatenator.h"
+#include "midi/ump/juce_UMP.h"
 #include "midi/ump/juce_UMPUtils.cpp"
 #include "midi/ump/juce_UMPView.cpp"
 #include "midi/ump/juce_UMPSysEx7.cpp"
 #include "midi/ump/juce_UMPMidi1ToMidi2DefaultTranslator.cpp"
 #include "midi/ump/juce_UMPIterator.cpp"
-#include "midi/ump/juce_UMPStringUtils.cpp"
+#include "utilities/juce_AudioWorkgroup.cpp"
 
 #if JUCE_UNIT_TESTS
  #include "utilities/juce_ADSR_test.cpp"
- #include "midi/juce_MidiDataConcatenator_test.cpp"
  #include "midi/ump/juce_UMP_test.cpp"
 #endif

@@ -35,7 +35,7 @@
 namespace juce
 {
 
-AbstractFifo::AbstractFifo (int backingBufferSize) noexcept : bufferSize (backingBufferSize)
+AbstractFifo::AbstractFifo (int capacity) noexcept : bufferSize (capacity)
 {
     jassert (bufferSize > 0);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Muhammad Tayyab Akram
+ * Copyright (C) 2014-2022 Muhammad Tayyab Akram
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
+#include <juce_graphics/unicode/sheenbidi/Headers/SBConfig.h>
 #include <stddef.h>
+#include <stdlib.h>
 
-#include <juce_graphics/unicode/sheenbidi/Headers/SheenBidi/SBConfig.h>
-
-#include "Object.h"
 #include "SBAssert.h"
 #include "SBBase.h"
 #include "StatusStack.h"
@@ -32,7 +31,7 @@ static SBBoolean StatusStackInsertElement(StatusStackRef stack)
         _StatusStackListRef peekList = previousList->next;
 
         if (!peekList) {
-            peekList = ObjectAddMemory(&stack->_object, sizeof(_StatusStackList));
+            peekList = malloc(sizeof(_StatusStackList));
             if (!peekList) {
                 return SBFalse;
             }
@@ -53,8 +52,6 @@ static SBBoolean StatusStackInsertElement(StatusStackRef stack)
 
 SB_INTERNAL void StatusStackInitialize(StatusStackRef stack)
 {
-    ObjectInitialize(&stack->_object);
-
     stack->_firstList.previous = NULL;
     stack->_firstList.next = NULL;
     
@@ -117,5 +114,11 @@ SB_INTERNAL SBBoolean StatusStackGetIsolateStatus(StatusStackRef stack)
 
 SB_INTERNAL void StatusStackFinalize(StatusStackRef stack)
 {
-    ObjectFinalize(&stack->_object);
+    _StatusStackListRef list = stack->_firstList.next;
+
+    while (list) {
+        _StatusStackListRef next = list->next;
+        free(list);
+        list = next;
+    };
 }

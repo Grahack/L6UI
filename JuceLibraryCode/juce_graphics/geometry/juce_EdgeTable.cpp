@@ -316,7 +316,7 @@ void EdgeTable::clearLineSizes() noexcept
 
 void EdgeTable::sanitiseLevels (const bool useNonZeroWinding) noexcept
 {
-    // convert the table from relative windings to absolute levels
+    // Convert the table from relative windings to absolute levels..
     int* lineStart = table.data();
 
     for (int y = bounds.getHeight(); --y >= 0;)

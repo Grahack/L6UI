@@ -63,7 +63,7 @@ namespace juce
     @tags{Core}
 */
 template <typename ValueType>
-class [[nodiscard]] ScopedValueSetter
+class ScopedValueSetter
 {
 public:
     /** Creates a ScopedValueSetter that will immediately change the specified value to the

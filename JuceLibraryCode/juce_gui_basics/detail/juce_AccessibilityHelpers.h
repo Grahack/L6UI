@@ -51,7 +51,17 @@ struct AccessibilityHelpers
 
     static void notifyAccessibilityEvent (const AccessibilityHandler&, Event);
 
-    static String getApplicationOrPluginName();
+    static String getApplicationOrPluginName()
+    {
+       #if defined (JucePlugin_Name)
+        return JucePlugin_Name;
+       #else
+        if (auto* app = JUCEApplicationBase::getInstance())
+            return app->getApplicationName();
+
+        return "JUCE Application";
+       #endif
+    }
 
     template <typename MemberFn>
     static const AccessibilityHandler* getEnclosingHandlerWithInterface (const AccessibilityHandler* handler, MemberFn fn)

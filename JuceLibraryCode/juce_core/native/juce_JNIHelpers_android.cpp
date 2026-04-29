@@ -187,7 +187,7 @@ constexpr uint8 activityCallbacksByteCode[]
  CALLBACK (juce_invokeImplementer, "dispatchInvoke", "(JLjava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;") \
  CALLBACK (juce_dispatchDelete, "dispatchFinalize", "(J)V")
 
- DECLARE_JNI_CLASS_WITH_BYTECODE (JuceInvocationHandler, "com/rmsl/juce/JuceInvocationHandler", 24, invocationHandleByteCode)
+ DECLARE_JNI_CLASS_WITH_BYTECODE (JuceInvocationHandler, "com/rmsl/juce/JuceInvocationHandler", 10, invocationHandleByteCode)
 #undef JNI_CLASS_MEMBERS
 
 #define JNI_CLASS_MEMBERS(METHOD, STATICMETHOD, FIELD, STATICFIELD, CALLBACK) \
@@ -248,7 +248,7 @@ struct SystemJavaClassComparator
 
 //==============================================================================
 JNIClassBase::JNIClassBase (const char* cp, int classMinSDK, const uint8* bc, size_t n)
-    : classPath (cp), byteCode (bc), byteCodeSize (n), minSDK (classMinSDK)
+    : classPath (cp), byteCode (bc), byteCodeSize (n), minSDK (classMinSDK), classRef (nullptr)
 {
     SystemJavaClassComparator comparator;
 
@@ -286,7 +286,7 @@ void JNIClassBase::initialise (JNIEnv* env, jobject context)
 
     if (sdkVersion >= minSDK)
     {
-        const auto classNameAndPackage = javaString (String (classPath).replaceCharacter (L'/', L'.'));
+        LocalRef<jstring> classNameAndPackage (javaString (String (classPath).replaceCharacter (L'/', L'.')));
         static Array<GlobalRef> byteCodeLoaders;
 
         if (! SystemJavaClassComparator::isSystemClass (this))
@@ -294,9 +294,8 @@ void JNIClassBase::initialise (JNIEnv* env, jobject context)
             // We use the context's class loader, rather than the 'system' class loader, because we
             // may need to load classes from our library dependencies (such as the BillingClient
             // library), and the system class loader is not aware of those libraries.
-            const LocalRef<jclass> contextClass { env->FindClass ("android/content/Context") };
             const LocalRef<jobject> defaultClassLoader { env->CallObjectMethod (context,
-                                                                                env->GetMethodID (contextClass,
+                                                                                env->GetMethodID (env->FindClass ("android/content/Context"),
                                                                                                   "getClassLoader",
                                                                                                   "()Ljava/lang/ClassLoader;")) };
 
@@ -375,8 +374,9 @@ void JNIClassBase::initialise (JNIEnv* env, jobject context)
         }
 
         if (classRef == nullptr)
-            classRef = GlobalRefImpl { LocalRef { env->FindClass (classPath) } };
+            classRef = (jclass) env->NewGlobalRef (LocalRef<jobject> (env->FindClass (classPath)));
 
+        jassert (classRef != nullptr);
         initialiseFields (env);
     }
 }
@@ -387,22 +387,23 @@ void JNIClassBase::tryLoadingClassWithClassLoader (JNIEnv* env, jobject classLoa
 
     // Android SDK <= 19 has a bug where the class loader might throw an exception but still return
     // a non-nullptr. So don't assign the result of this call to a jobject just yet...
-    LocalRef classObj { (jclass) env->CallObjectMethod (classLoader, JavaClassLoader.loadClass, classNameAndPackage.get(), (jboolean) true) };
+    auto classObj = env->CallObjectMethod (classLoader, JavaClassLoader.loadClass, classNameAndPackage.get(), (jboolean) true);
 
     if (jthrowable exception = env->ExceptionOccurred())
     {
         env->ExceptionClear();
-        classObj = {};
+        classObj = nullptr;
     }
 
     // later versions of Android don't throw at all, so re-check the object
     if (classObj != nullptr)
-        classRef = GlobalRefImpl { classObj };
+        classRef = (jclass) env->NewGlobalRef (LocalRef<jobject> (classObj));
 }
 
 void JNIClassBase::release (JNIEnv* env)
 {
-    classRef.clear (env);
+    if (classRef != nullptr)
+        env->DeleteGlobalRef (classRef);
 }
 
 void JNIClassBase::initialiseAllClasses (JNIEnv* env, jobject context)
@@ -465,12 +466,12 @@ LocalRef<jobject> CreateJavaInterface (AndroidInterfaceImplementer* implementer,
     // you need to override at least one interface
     jassert (interfaceNames.size() > 0);
 
-    LocalRef<jobject> classArray { env->NewObjectArray (interfaceNames.size(), JavaClass, nullptr) };
+    auto classArray = LocalRef<jobject> (env->NewObjectArray (interfaceNames.size(), JavaClass, nullptr));
     LocalRef<jobject> classLoader;
 
     for (auto i = 0; i < interfaceNames.size(); ++i)
     {
-        LocalRef<jobject> aClass { env->FindClass (interfaceNames[i].toRawUTF8()) };
+        auto aClass = LocalRef<jobject> (env->FindClass (interfaceNames[i].toRawUTF8()));
 
         if (aClass != nullptr)
         {
@@ -486,8 +487,8 @@ LocalRef<jobject> CreateJavaInterface (AndroidInterfaceImplementer* implementer,
         }
     }
 
-    LocalRef<jobject> invocationHandler { env->NewObject (JuceInvocationHandler, JuceInvocationHandler.constructor,
-                                                          reinterpret_cast<jlong> (implementer)) };
+    auto invocationHandler = LocalRef<jobject> (env->NewObject (JuceInvocationHandler, JuceInvocationHandler.constructor,
+                                                                reinterpret_cast<jlong> (implementer)));
 
     // CreateJavaInterface() is expected to be called just once for a given implementer
     jassert (implementer->invocationHandler == nullptr);
@@ -630,7 +631,7 @@ int getAndroidSDKVersion()
         // when this method is used
         auto* env = getEnv();
 
-        LocalRef<jclass> buildVersion { env->FindClass ("android/os/Build$VERSION") };
+        auto buildVersion = env->FindClass ("android/os/Build$VERSION");
         jassert (buildVersion != nullptr);
 
         auto sdkVersionField = env->GetStaticFieldID (buildVersion, "SDK_INT", "I");
@@ -709,7 +710,7 @@ static const uint8 javaFragmentOverlay[] =
  CALLBACK (generatedCallback<&FragmentOverlay::onStartCallback>,                    "onStartNative",                    "(J)V") \
  CALLBACK (generatedCallback<&FragmentOverlay::onRequestPermissionsResultCallback>, "onRequestPermissionsResultNative", "(JI[Ljava/lang/String;[I)V")
 
- DECLARE_JNI_CLASS_WITH_BYTECODE (JuceFragmentOverlay, "com/rmsl/juce/FragmentOverlay", 24, javaFragmentOverlay)
+ DECLARE_JNI_CLASS_WITH_BYTECODE (JuceFragmentOverlay, "com/rmsl/juce/FragmentOverlay", 16, javaFragmentOverlay)
 #undef JNI_CLASS_MEMBERS
 
 #define JNI_CLASS_MEMBERS(METHOD, STATICMETHOD, FIELD, STATICFIELD, CALLBACK) \
@@ -824,17 +825,19 @@ String audioManagerGetProperty (const String& property)
     LocalRef<jobject> audioManager (env->CallObjectMethod (getAppContext().get(), AndroidContext.getSystemService,
                                                            javaString ("audio").get()));
 
-    if (audioManager == nullptr)
-        return {};
+    if (audioManager != nullptr)
+    {
+        LocalRef<jstring> jProperty (javaString (property));
 
-    auto methodID = env->GetMethodID (AndroidAudioManager, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+        auto methodID = env->GetMethodID (AndroidAudioManager, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
 
-    if (methodID == nullptr)
-        return {};
+        if (methodID != nullptr)
+            return juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (audioManager.get(),
+                                                                                   methodID,
+                                                                                   javaString (property).get())));
+    }
 
-    return juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (audioManager.get(),
-                                                                           methodID,
-                                                                           javaString (property).get())));
+    return {};
 }
 
 }

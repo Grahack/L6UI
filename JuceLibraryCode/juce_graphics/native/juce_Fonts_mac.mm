@@ -174,17 +174,14 @@ public:
         if (ctFont == nullptr)
             return {};
 
-        HbFont result { hb_coretext_font_create (ctFont.get()), IncrementRef::no };
+        HbFont result { hb_coretext_font_create (ctFont.get()) };
 
         if (result == nullptr)
             return {};
 
         FontStyleHelpers::initSynthetics (result.get(), font);
 
-        return new CoreTextTypeface (std::move (ctFont),
-                                     std::move (result),
-                                     font.getTypefaceName(),
-                                     font.getTypefaceStyle());
+        return new CoreTextTypeface (std::move (ctFont), std::move (result), font.getTypefaceName(), font.getTypefaceStyle());
     }
 
     static Typeface::Ptr from (Span<const std::byte> data)
@@ -223,7 +220,7 @@ public:
         if (ctFont == nullptr)
             return {};
 
-        HbFont result { hb_coretext_font_create (ctFont.get()), IncrementRef::no };
+        HbFont result { hb_coretext_font_create (ctFont.get()) };
 
         if (result == nullptr)
             return {};
@@ -236,6 +233,11 @@ public:
                                      String::fromCFString (family.get()),
                                      String::fromCFString (style.get()),
                                      std::move (copy));
+    }
+
+    Native getNativeDetails() const override
+    {
+        return Native { hb.get(), nonPortableMetrics };
     }
 
     Typeface::Ptr createSystemFallback (const String& c, const String& language) const override
@@ -259,7 +261,7 @@ public:
         const CFUniquePtr<CFStringRef> newStyle { (CFStringRef) CTFontDescriptorCopyAttribute (descriptor.get(),
                                                                                                kCTFontStyleNameAttribute) };
 
-        HbFont result { hb_coretext_font_create (newFont.get()), IncrementRef::no };
+        HbFont result { hb_coretext_font_create (newFont.get()) };
 
         if (result == nullptr)
             return {};
@@ -291,11 +293,6 @@ public:
         return ctFont.get();
     }
 
-    const Native* getNativeDetails() const override
-    {
-        return native.get();
-    }
-
     static Typeface::Ptr findSystemTypeface()
     {
         CFUniquePtr<CTFontRef> defaultCtFont (CTFontCreateUIFontForLanguage (kCTFontUIFontSystem, 0.0, nullptr));
@@ -304,7 +301,7 @@ public:
         const CFUniquePtr<CFStringRef> newStyle { (CFStringRef) CTFontDescriptorCopyAttribute (descriptor.get(),
                                                                                                kCTFontStyleNameAttribute) };
 
-        HbFont result { hb_coretext_font_create (defaultCtFont.get()), IncrementRef::no };
+        HbFont result { hb_coretext_font_create (defaultCtFont.get()) };
 
         if (result == nullptr)
             return {};
@@ -317,17 +314,6 @@ public:
     }
 
 private:
-    static TypefaceAscentDescent getNativeMetrics (CTFontRef ctFont)
-    {
-        const CFUniquePtr<CGFontRef> cgFont { CTFontCopyGraphicsFont (ctFont, nullptr) };
-
-        const auto upem = (float) CGFontGetUnitsPerEm (cgFont.get());
-        const auto ascent  = std::abs ((float) CGFontGetAscent  (cgFont.get()) / upem);
-        const auto descent = std::abs ((float) CGFontGetDescent (cgFont.get()) / upem);
-
-        return { ascent, descent };
-    }
-
     CoreTextTypeface (CFUniquePtr<CTFontRef> nativeFont,
                       HbFont fontIn,
                       const String& name,
@@ -335,8 +321,8 @@ private:
                       MemoryBlock data = {})
         : Typeface (name, style),
           ctFont (std::move (nativeFont)),
-          storage (std::move (data)),
-          native (std::make_unique<Native> (TypefaceNativeOptions { std::move (fontIn), getNativeMetrics (ctFont.get()) }))
+          hb (std::move (fontIn)),
+          storage (std::move (data))
     {
         if (! storage.isEmpty())
             getRegistered().add (ctFont.get());
@@ -356,8 +342,15 @@ private:
     // We store this, rather than calling hb_coretext_font_get_ct_font, because harfbuzz may
     // override the font cascade list in the returned font.
     CFUniquePtr<CTFontRef> ctFont;
+    HbFont hb;
     MemoryBlock storage;
-    std::unique_ptr<Native> native;
+    TypefaceAscentDescent nonPortableMetrics = [&]
+    {
+        const CFUniquePtr<CGFontRef> cgFont { CTFontCopyGraphicsFont (ctFont.get(), nullptr) };
+        const auto upem = (float) CGFontGetUnitsPerEm (cgFont.get());
+        return TypefaceAscentDescent { (float) std::abs (CGFontGetAscent (cgFont.get())  / upem),
+                                       (float) std::abs (CGFontGetDescent (cgFont.get()) / upem) };
+    }();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoreTextTypeface)
 };

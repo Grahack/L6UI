@@ -473,7 +473,7 @@ static Displays::Display getDisplayFromScreen (NSScreen* s, CGFloat& mainScreenB
     return d;
 }
 
-void Displays::findDisplays (const Desktop& desktop)
+void Displays::findDisplays (const float masterScale)
 {
     JUCE_AUTORELEASEPOOL
     {
@@ -483,7 +483,7 @@ void Displays::findDisplays (const Desktop& desktop)
         CGFloat mainScreenBottom = 0;
 
         for (NSScreen* s in [NSScreen screens])
-            displays.add (getDisplayFromScreen (s, mainScreenBottom, desktop.getGlobalScaleFactor()));
+            displays.add (getDisplayFromScreen (s, mainScreenBottom, masterScale));
     }
 }
 

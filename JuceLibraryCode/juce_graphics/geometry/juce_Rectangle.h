@@ -39,6 +39,8 @@ namespace juce
 namespace detail
 {
 
+template <typename> struct Tag {};
+
 inline auto getNumericValue (StringRef s, Tag<int>)    { return s.text.getIntValue32(); }
 inline auto getNumericValue (StringRef s, Tag<double>) { return s.text.getDoubleValue(); }
 inline auto getNumericValue (StringRef s, Tag<float>)  { return static_cast<float> (s.text.getDoubleValue()); }

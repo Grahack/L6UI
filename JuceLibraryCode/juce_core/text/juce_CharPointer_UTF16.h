@@ -90,32 +90,33 @@ public:
     /** Returns the unicode character that this pointer is pointing to. */
     juce_wchar operator*() const noexcept
     {
-        const auto first = (uint32) (uint16) data[0];
+        auto n = (uint32) (uint16) *data;
 
-        if ((++CharPointer_UTF16 (*this)).data - data == 1)
-            return (juce_wchar) first;
+        if (n >= 0xd800 && n <= 0xdfff && ((uint32) (uint16) data[1]) >= 0xdc00)
+            n = 0x10000 + (((n - 0xd800) << 10) | (((uint32) (uint16) data[1]) - 0xdc00));
 
-        const auto second = (uint32) (uint16) data[1];
-        return (juce_wchar) (0x10000 + (((first - 0xd800) << 10) | (second - 0xdc00)));
+        return (juce_wchar) n;
     }
 
     /** Moves this pointer along to the next character in the string. */
     CharPointer_UTF16& operator++() noexcept
     {
-        data += (CharacterFunctions::isHighSurrogate ((uint16) data[0])
-                 && CharacterFunctions::isLowSurrogate ((uint16) data[1]))
-              ? 2
-              : 1;
+        auto n = (uint32) (uint16) *data++;
+
+        if (n >= 0xd800 && n <= 0xdfff && ((uint32) (uint16) *data) >= 0xdc00)
+            ++data;
+
         return *this;
     }
 
     /** Moves this pointer back to the previous character in the string. */
     CharPointer_UTF16& operator--() noexcept
     {
-        data -= (CharacterFunctions::isLowSurrogate ((uint16) data[-1])
-                 && CharacterFunctions::isHighSurrogate ((uint16) data[-2]))
-              ? 2
-              : 1;
+        auto n = (uint32) (uint16) (*--data);
+
+        if (n >= 0xdc00 && n <= 0xdfff)
+            --data;
+
         return *this;
     }
 
@@ -123,9 +124,12 @@ public:
         advances the pointer to point to the next character. */
     juce_wchar getAndAdvance() noexcept
     {
-        const auto result = **this;
-        ++(*this);
-        return result;
+        auto n = (uint32) (uint16) *data++;
+
+        if (n >= 0xd800 && n <= 0xdfff && ((uint32) (uint16) *data) >= 0xdc00)
+            n = 0x10000 + ((((n - 0xd800) << 10) | (((uint32) (uint16) *data++) - 0xdc00)));
+
+        return (juce_wchar) n;
     }
 
     /** Moves this pointer along to the next character in the string. */
@@ -210,7 +214,7 @@ public:
         {
             auto n = (uint32) (uint16) *d++;
 
-            if (CharacterFunctions::isHighSurrogate ((juce_wchar) n))
+            if (n >= 0xd800 && n <= 0xdfff)
             {
                 if (*d++ == 0)
                     break;

@@ -81,15 +81,9 @@ private:
                     the 'OwnerClass' template parameter - the name and stack trace of its creation should
                     have been printed by the lines above.
 
-                    Many errors like this are caused by using old-fashioned, non-RAII techniques for
-                    object management. If you're seeing this, it's a good idea to double-check
-                    that you're using std::unique_ptrs, OwnedArrays,
-                    ReferenceCountedObjects, etc, and avoiding manual calls to the 'delete'
-                    operator at all costs!
-
-                    You may also see this error if JUCE's shutdown code is called while an object
-                    containing a leak detector is still alive (perhaps declared as a namespace-scope
-                    static).
+                    If you're leaking, it's probably because you're using old-fashioned, non-RAII techniques for
+                    your object management. Tut, tut. Always, always use std::unique_ptrs, OwnedArrays,
+                    ReferenceCountedObjects, etc, and avoid the 'delete' operator at all costs!
                 */
                 jassertfalse;
             }

@@ -35,14 +35,14 @@
 namespace juce
 {
 
-Displays::Displays (const Desktop& desktop)
+Displays::Displays (Desktop& desktop)
 {
     init (desktop);
 }
 
-void Displays::init (const Desktop& desktop)
+void Displays::init (Desktop& desktop)
 {
-    findDisplays (desktop);
+    findDisplays (desktop.getGlobalScaleFactor());
 }
 
 const Displays::Display* Displays::getDisplayForRect (Rectangle<int> rect, bool isPhysical) const noexcept

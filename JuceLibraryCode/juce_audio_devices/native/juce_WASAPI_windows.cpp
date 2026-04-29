@@ -412,25 +412,12 @@ static bool supportsSampleRateConversion (WASAPIDeviceMode deviceMode) noexcept
 }
 
 //==============================================================================
-struct WASAPIDeviceBaseDelegate
-{
-    virtual ~WASAPIDeviceBaseDelegate() = default;
-    virtual void deviceOpened (IMMDevice*) = 0;
-    virtual void deviceSampleRateChanged (IMMDevice*) = 0;
-    virtual void deviceSessionBecameInactive (IMMDevice*) = 0;
-    virtual void deviceSessionExpired (IMMDevice*) = 0;
-    virtual void deviceSessionBecameActive (IMMDevice*) = 0;
-};
-
 class WASAPIDeviceBase
 {
 public:
-    WASAPIDeviceBase (const ComSmartPtr<IMMDevice>& d,
-                      WASAPIDeviceMode mode,
-                      WASAPIDeviceBaseDelegate& delegateIn)
+    WASAPIDeviceBase (const ComSmartPtr<IMMDevice>& d, WASAPIDeviceMode mode)
         : device (d),
-          deviceMode (mode),
-          delegate (delegateIn)
+          deviceMode (mode)
     {
         clientEvent = CreateEvent (nullptr, false, false, nullptr);
 
@@ -481,7 +468,8 @@ public:
         if (client == nullptr || ! tryInitialisingWithBufferSize (bufferSizeSamples))
             return false;
 
-        delegate.deviceOpened (device);
+        sampleRateHasChanged = false;
+        shouldShutdown = false;
 
         channelMaps.clear();
 
@@ -515,22 +503,22 @@ public:
 
     void deviceSampleRateChanged()
     {
-        delegate.deviceSampleRateChanged (device);
+        sampleRateHasChanged = true;
     }
 
     void deviceSessionBecameInactive()
     {
-        delegate.deviceSessionBecameInactive (device);
+        isActive = false;
     }
 
     void deviceSessionExpired()
     {
-        delegate.deviceSessionExpired (device);
+        shouldShutdown = true;
     }
 
     void deviceSessionBecameActive()
     {
-        delegate.deviceSessionBecameActive (device);
+        isActive = true;
     }
 
     std::optional<BigInteger> getDefaultLayout() const
@@ -549,8 +537,6 @@ public:
 
     WASAPIDeviceMode deviceMode;
 
-    WASAPIDeviceBaseDelegate& delegate;
-
     double sampleRate = 0, defaultSampleRate = 0;
     int numChannels = 0, actualNumChannels = 0, maxNumChannels = 0, defaultNumChannels = 0;
     int minBufferSize = 0, defaultBufferSize = 0, latencySamples = 0;
@@ -562,6 +548,7 @@ public:
     Array<int> channelMaps;
     UINT32 actualBufferSize = 0;
     int bytesPerSample = 0, bytesPerFrame = 0;
+    std::atomic<bool> sampleRateHasChanged { false }, shouldShutdown { false }, isActive { true };
 
     virtual void updateFormat (bool isFloat) = 0;
 
@@ -619,7 +606,7 @@ private:
         if (audioSessionControl == nullptr)
             return;
 
-        sessionEventCallback = ComSmartPtr { new SessionEventCallback (*this), IncrementRef::no };
+        sessionEventCallback = becomeComSmartPtrOwner (new SessionEventCallback (*this));
         audioSessionControl->RegisterAudioSessionNotification (sessionEventCallback);
     }
 
@@ -932,7 +919,10 @@ private:
 class WASAPIInputDevice final : public WASAPIDeviceBase
 {
 public:
-    using WASAPIDeviceBase::WASAPIDeviceBase;
+    WASAPIInputDevice (const ComSmartPtr<IMMDevice>& d, WASAPIDeviceMode mode)
+        : WASAPIDeviceBase (d, mode)
+    {
+    }
 
     ~WASAPIInputDevice() override
     {
@@ -981,7 +971,7 @@ public:
             return false;
 
         purgeInputBuffers();
-        delegate.deviceSessionBecameActive (device);
+        isActive = true;
 
         return true;
     }
@@ -1077,7 +1067,10 @@ private:
 class WASAPIOutputDevice final : public WASAPIDeviceBase
 {
 public:
-    using WASAPIDeviceBase::WASAPIDeviceBase;
+    WASAPIOutputDevice (const ComSmartPtr<IMMDevice>& d, WASAPIDeviceMode mode)
+        : WASAPIDeviceBase (d, mode)
+    {
+    }
 
     ~WASAPIOutputDevice() override
     {
@@ -1123,7 +1116,7 @@ public:
         if (! check (client->Start()))
             return false;
 
-        delegate.deviceSessionBecameActive (device);
+        isActive = true;
 
         return true;
     }
@@ -1200,7 +1193,6 @@ private:
 //==============================================================================
 class WASAPIAudioIODevice final : public AudioIODevice,
                                   public Thread,
-                                  private WASAPIDeviceBaseDelegate,
                                   private AsyncUpdater
 {
 public:
@@ -1410,8 +1402,8 @@ public:
         if (inputDevice != nullptr)   ResetEvent (inputDevice->clientEvent);
         if (outputDevice != nullptr)  ResetEvent (outputDevice->clientEvent);
 
-        flags.fetch_and (~(flagShutdown | flagInputSampleRateDidChange | flagOutputSampleRateDidChange),
-                         std::memory_order_acq_rel);
+        // No lock here; background thread is not running
+        flags &= ~(flagShutdown | flagSampleRateChanged);
 
         startThread (Priority::high);
         Thread::sleep (5);
@@ -1440,7 +1432,7 @@ public:
             }
         }
 
-        flags.fetch_or (flagOpen, std::memory_order_acq_rel);
+        flags |= flagOpen;
 
         return lastError;
     }
@@ -1459,17 +1451,17 @@ public:
         if (outputDevice != nullptr)  outputDevice->close();
 
         // Background thread has stopped at this point
-        flags.fetch_and (~flagOpen, std::memory_order_acq_rel);
+        flags &= ~flagOpen;
     }
 
     bool isOpen() override
     {
-        return ((flags.load (std::memory_order_acquire) & flagOpen) != 0) && isThreadRunning();
+        return ((flags & flagOpen) != 0) && isThreadRunning();
     }
 
     bool isPlaying() override
     {
-        return ((flags.load (std::memory_order_acquire) & (flagOpen | flagStarted)) == (flagOpen | flagStarted)) && isThreadRunning();
+        return ((flags & (flagOpen | flagStarted)) == (flagOpen | flagStarted)) && isThreadRunning();
     }
 
     void start (AudioIODeviceCallback* call) override
@@ -1477,13 +1469,13 @@ public:
         {
             const ScopedLock sl (startStopLock);
 
-            if ((flags.load (std::memory_order_acquire) & (flagOpen | flagStarted)) != flagOpen || call == nullptr)
+            if ((flags & (flagOpen | flagStarted)) != flagOpen || call == nullptr)
                 return;
 
             if (! isThreadRunning())
             {
-                // something's gone wrong and the thread's stopped
-                flags.fetch_and (~flagOpen, std::memory_order_acq_rel);
+                // something's gone wrong and the thread's stopped..
+                flags &= ~flagOpen;
                 return;
             }
         }
@@ -1494,7 +1486,7 @@ public:
             const ScopedLock sl (startStopLock);
 
             callback = call;
-            flags.fetch_or (flagStarted, std::memory_order_acq_rel);
+            flags |= flagStarted;
         }
     }
 
@@ -1504,7 +1496,7 @@ public:
         {
             const ScopedLock sl (startStopLock);
 
-            const auto wasStarted = (flags.fetch_and (~flagStarted, std::memory_order_acq_rel) & flagStarted) != 0;
+            const auto wasStarted = (flags.fetch_and (~flagStarted) & flagStarted) != 0;
             return wasStarted ? callback : nullptr;
         });
 
@@ -1542,16 +1534,17 @@ public:
 
         while (! threadShouldExit())
         {
-            const auto loadedFlags = flags.load (std::memory_order_acquire);
-
-            if ((loadedFlags & (flagShutdown | flagOutputSampleRateDidChange | flagInputSampleRateDidChange)) != 0)
+            if ((outputDevice != nullptr && outputDevice->shouldShutdown)
+                || (inputDevice != nullptr && inputDevice->shouldShutdown))
             {
+                flags |= flagShutdown;
                 triggerAsyncUpdate();
+
                 break;
             }
 
-            const auto inputDeviceActive  = (loadedFlags & flagInputIsActive) != 0;
-            const auto outputDeviceActive = (loadedFlags & flagOutputIsActive) != 0;
+            auto inputDeviceActive = (inputDevice != nullptr && inputDevice->isActive);
+            auto outputDeviceActive = (outputDevice != nullptr && outputDevice->isActive);
 
             if (! inputDeviceActive && ! outputDeviceActive)
                 continue;
@@ -1575,12 +1568,20 @@ public:
                 }
 
                 inputDevice->copyBuffersFromReservoir (ins.getArrayOfWritePointers(), numInputBuffers, bufferSize);
+
+                if (inputDevice->sampleRateHasChanged)
+                {
+                    flags |= flagSampleRateChanged;
+                    triggerAsyncUpdate();
+
+                    break;
+                }
             }
 
             {
                 const ScopedTryLock sl (startStopLock);
 
-                if (sl.isLocked() && (loadedFlags & flagStarted) != 0)
+                if (sl.isLocked() && (flags & flagStarted) != 0)
                 {
                     callback->audioDeviceIOCallbackWithContext (ins.getArrayOfReadPointers(),
                                                                 numInputBuffers,
@@ -1600,6 +1601,14 @@ public:
                 // Note that this function is handed the input device so it can check for the event and make sure
                 // the input reservoir is filled up correctly even when bufferSize > device actualBufferSize
                 outputDevice->copyBuffers (outs.getArrayOfReadPointers(), numOutputBuffers, bufferSize, inputDevice.get(), *this);
+
+                if (outputDevice->sampleRateHasChanged)
+                {
+                    flags |= flagSampleRateChanged;
+                    triggerAsyncUpdate();
+
+                    break;
+                }
             }
         }
     }
@@ -1609,45 +1618,6 @@ public:
     String lastError;
 
 private:
-    void deviceOpened (IMMDevice* d) override
-    {
-        const auto newFlags = inputDevice == nullptr || inputDevice->device != d
-                            ? ~flagOutputSampleRateDidChange
-                            : ~flagInputSampleRateDidChange;
-        flags.fetch_and (newFlags, std::memory_order_acq_rel);
-    }
-
-    void deviceSampleRateChanged (IMMDevice* d) override
-    {
-        const auto newFlags = inputDevice == nullptr || inputDevice->device != d
-                            ? flagOutputSampleRateDidChange
-                            : flagInputSampleRateDidChange;
-        flags.fetch_or (newFlags, std::memory_order_acq_rel);
-    }
-
-    void deviceSessionBecameInactive (IMMDevice* d) override
-    {
-        const auto newFlags = inputDevice == nullptr || inputDevice->device != d
-                            ? flagOutputIsActive
-                            : flagInputIsActive;
-        flags.fetch_and (~newFlags, std::memory_order_acq_rel);
-    }
-
-    void deviceSessionExpired (IMMDevice*) override
-    {
-        flags.fetch_or (flagShutdown, std::memory_order_acq_rel);
-    }
-
-    void deviceSessionBecameActive (IMMDevice* d) override
-    {
-        const auto newFlags = inputDevice == nullptr || inputDevice->device != d
-                            ? flagOutputIsActive
-                            : flagInputIsActive;
-        flags.fetch_or (newFlags, std::memory_order_acq_rel);
-    }
-
-    std::atomic<int> flags { 0 };
-
     // Device stats...
     std::unique_ptr<WASAPIInputDevice> inputDevice;
     std::unique_ptr<WASAPIOutputDevice> outputDevice;
@@ -1659,17 +1629,15 @@ private:
     Array<double> sampleRates;
     Array<int> bufferSizes;
 
+    // Active state...
+    std::atomic<int> flags { 0 };
+
     enum Flags
     {
-        flagOpen                        = 1 << 0,
-        flagStarted                     = 1 << 1,
-        flagShutdown                    = 1 << 2,
-
-        flagInputSampleRateDidChange    = 1 << 3,
-        flagInputIsActive               = 1 << 4,
-
-        flagOutputSampleRateDidChange   = 1 << 5,
-        flagOutputIsActive              = 1 << 6,
+        flagOpen                = 1 << 0,
+        flagStarted             = 1 << 1,
+        flagShutdown            = 1 << 2,
+        flagSampleRateChanged   = 1 << 3,
     };
 
     int currentBufferSizeSamples = 0;
@@ -1712,9 +1680,9 @@ private:
             auto flow = getDataFlow (device);
 
             if (deviceId == inputDeviceId && flow == eCapture)
-                inputDevice.reset (new WASAPIInputDevice (device, deviceMode, *this));
+                inputDevice.reset (new WASAPIInputDevice (device, deviceMode));
             else if (deviceId == outputDeviceId && flow == eRender)
-                outputDevice.reset (new WASAPIOutputDevice (device, deviceMode, *this));
+                outputDevice.reset (new WASAPIOutputDevice (device, deviceMode));
         }
 
         return (outputDeviceId.isEmpty() || (outputDevice != nullptr && outputDevice->isOk()))
@@ -1732,8 +1700,7 @@ private:
             inputDevice = nullptr;
         };
 
-        const auto prevFlags = flags.fetch_and (~(flagShutdown | flagInputSampleRateDidChange | flagOutputSampleRateDidChange),
-                                                std::memory_order_acq_rel);
+        const auto prevFlags = flags.fetch_and (~(flagShutdown | flagSampleRateChanged));
 
         if ((prevFlags & flagShutdown) != 0)
         {
@@ -1741,10 +1708,10 @@ private:
             return;
         }
 
-        if ((prevFlags & (flagInputSampleRateDidChange | flagOutputSampleRateDidChange)) == 0)
+        if ((prevFlags & flagSampleRateChanged) == 0)
             return;
 
-        const auto sampleRateChangedByInput = (prevFlags & flagInputSampleRateDidChange) != 0;
+        auto sampleRateChangedByInput = (inputDevice != nullptr && inputDevice->sampleRateHasChanged);
 
         closeDevices();
         initialise();
@@ -1930,7 +1897,7 @@ private:
             if (! check (enumerator.CoCreateInstance (__uuidof (MMDeviceEnumerator))))
                 return {};
 
-            notifyClient = ComSmartPtr (new ChangeNotificationClient (this), IncrementRef::no);
+            notifyClient = becomeComSmartPtrOwner (new ChangeNotificationClient (this));
             enumerator->RegisterEndpointNotificationCallback (notifyClient);
         }
 

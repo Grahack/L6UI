@@ -42,14 +42,6 @@ constexpr uint64_t operator""_u64 (unsigned long long int i) { return static_cas
 
 class UniversalMidiPacketTests final : public UnitTest
 {
-    static auto makeMidiMessageAppender (MidiBuffer& b)
-    {
-        return [&b] (const BytesOnGroup& x, double time)
-        {
-            b.addEvent (makeMidiMessage (x, time), (int) time);
-        };
-    }
-
 public:
     UniversalMidiPacketTests()
         : UnitTest ("Universal MIDI Packet", UnitTestCategories::midi)
@@ -62,7 +54,7 @@ public:
 
         beginTest ("Short bytestream midi messages can be round-tripped through the UMP converter");
         {
-            SingleGroupMidi1ToBytestreamTranslator translator (0);
+            Midi1ToBytestreamTranslator translator (0);
 
             forEachNonSysExTestMessage (random, [&] (const MidiMessage& m)
             {
@@ -70,15 +62,15 @@ public:
                 expect (packets.size() == 1);
 
                 // Make sure that the message type is correct
-                expect (Utils::getMessageType (packets.data()[0])
-                        == ((m.getRawData()[0] >> 0x4) == 0xf
-                            ? Utils::MessageKind::commonRealtime
-                            : Utils::MessageKind::channelVoice1));
+                const auto msgType = Utils::getMessageType (packets.data()[0]);
+                expect (msgType == ((m.getRawData()[0] >> 0x4) == 0xf ? 0x1 : 0x2));
 
-                translator.dispatch (View { packets.data() }, 0, [&] (const BytesOnGroup& roundTripped, double time)
-                {
-                    expect (equal (m, makeMidiMessage (roundTripped, time)));
-                });
+                translator.dispatch (View {packets.data() },
+                                     0,
+                                     [&] (const BytestreamMidiView& roundTripped)
+                                     {
+                                         expect (equal (m, roundTripped.getMessage()));
+                                     });
             });
         }
 
@@ -149,10 +141,16 @@ public:
         const auto checkRoundTrip = [&] (const MidiBuffer& expected)
         {
             for (const auto meta : expected)
-                Conversion::toMidi1 ({ 0, meta.asSpan() }, [&] (const auto p) { packets.add (p); });
+                Conversion::toMidi1 (ump::BytestreamMidiView (meta), [&] (const auto p) { packets.add (p); });
 
             MidiBuffer output;
-            converter.dispatch (packets, 0, makeMidiMessageAppender (output));
+            converter.dispatch (packets.data(),
+                                packets.data() + packets.size(),
+                                0,
+                                [&] (const BytestreamMidiView& roundTripped)
+                                {
+                                    output.addEvent (roundTripped.getMessage(), int (roundTripped.timestamp));
+                                });
             packets.clear();
 
             expect (equal (expected, output));
@@ -189,7 +187,13 @@ public:
             }
 
             MidiBuffer output;
-            converter.dispatch (modifiedPackets, 0, makeMidiMessageAppender (output));
+            converter.dispatch (modifiedPackets.data(),
+                                modifiedPackets.data() + modifiedPackets.size(),
+                                0,
+                                [&] (const BytestreamMidiView& roundTripped)
+                                {
+                                    output.addEvent (roundTripped.getMessage(), int (roundTripped.timestamp));
+                                });
 
             // All Utility messages should have been ignored
             expect (output.getNumEvents() == 1);
@@ -210,7 +214,7 @@ public:
             {
                 const auto newPacket = createRandomRealtimeUMP (random);
                 modifiedPackets.add (View (newPacket.data()));
-                realtimeMessages.addEvent (SingleGroupMidi1ToBytestreamExtractor::fromUmp (newPacket), 0);
+                realtimeMessages.addEvent (Midi1ToBytestreamTranslator::fromUmp (newPacket), 0);
             };
 
             for (const auto& packet : originalPackets)
@@ -221,7 +225,13 @@ public:
             }
 
             MidiBuffer output;
-            converter.dispatch (modifiedPackets, 0, makeMidiMessageAppender (output));
+            converter.dispatch (modifiedPackets.data(),
+                                modifiedPackets.data() + modifiedPackets.size(),
+                                0,
+                                [&] (const BytestreamMidiView& roundTripped)
+                                {
+                                    output.addEvent (roundTripped.getMessage(), int (roundTripped.timestamp));
+                                });
 
             const auto numOutputs = output.getNumEvents();
             const auto numInputs = realtimeMessages.getNumEvents();
@@ -263,7 +273,7 @@ public:
             {
                 const auto newPacket = createRandomRealtimeUMP (random);
                 modifiedPackets.add (View (newPacket.data()));
-                realtimeMessages.addEvent (SingleGroupMidi1ToBytestreamExtractor::fromUmp (newPacket), 0);
+                realtimeMessages.addEvent (Midi1ToBytestreamTranslator::fromUmp (newPacket), 0);
             };
 
             const auto addRandomUtilityUMP = [&]
@@ -282,7 +292,13 @@ public:
             }
 
             MidiBuffer output;
-            converter.dispatch (modifiedPackets, 0, makeMidiMessageAppender (output));
+            converter.dispatch (modifiedPackets.data(),
+                                modifiedPackets.data() + modifiedPackets.size(),
+                                0,
+                                [&] (const BytestreamMidiView& roundTripped)
+                                {
+                                    output.addEvent (roundTripped.getMessage(), int (roundTripped.timestamp));
+                                });
 
             const auto numOutputs = output.getNumEvents();
             const auto numInputs = realtimeMessages.getNumEvents();
@@ -325,7 +341,7 @@ public:
                 Packets p;
 
                 for (const auto meta : noteOn)
-                    Conversion::toMidi1 ({ 0, meta.asSpan() }, [&] (const auto packet) { p.add (packet); });
+                    Conversion::toMidi1 (ump::BytestreamMidiView (meta), [&] (const auto packet) { p.add (packet); });
 
                 return p;
             }();
@@ -359,7 +375,13 @@ public:
 
             const auto pushToOutput = [&] (const Packets& p)
             {
-                converter.dispatch (p, 0, makeMidiMessageAppender (output));
+                converter.dispatch (p.data(),
+                                    p.data() + p.size(),
+                                    0,
+                                    [&] (const BytestreamMidiView& roundTripped)
+                                    {
+                                        output.addEvent (roundTripped.getMessage(), int (roundTripped.timestamp));
+                                    });
             };
 
             pushToOutput (modifiedPackets);
@@ -859,7 +881,7 @@ private:
     static Packets toMidi1 (const MidiMessage& msg)
     {
         Packets packets;
-        Conversion::toMidi1 ({ 0, msg.asSpan() }, [&] (const auto p) { packets.add (p); });
+        Conversion::toMidi1 (ump::BytestreamMidiView (&msg), [&] (const auto p) { packets.add (p); });
         return packets;
     }
 
@@ -988,11 +1010,6 @@ private:
     static bool equal (const MidiBuffer& a, const MidiBuffer& b) noexcept
     {
         return a.data == b.data;
-    }
-
-    static MidiMessage makeMidiMessage (const BytesOnGroup& b, double time)
-    {
-        return { b.bytes.data(), (int) b.bytes.size(), time };
     }
 };
 

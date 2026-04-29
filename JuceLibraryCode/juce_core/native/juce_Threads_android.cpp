@@ -48,7 +48,7 @@ DECLARE_JNI_CLASS (AndroidResolveInfo, "android/content/pm/ResolveInfo")
 
 //==============================================================================
 JavaVM* androidJNIJavaVM = nullptr;
-GlobalRef androidApkContext;
+jobject androidApkContext = nullptr;
 
 //==============================================================================
 JNIEnv* getEnv() noexcept
@@ -84,7 +84,7 @@ extern "C" jint JNIEXPORT JNI_OnLoad (JavaVM* vm, void*)
     auto* env = getEnv();
 
     // register the initialisation function
-    LocalRef<jclass> juceJavaClass { env->FindClass ("com/rmsl/juce/Java") };
+    auto juceJavaClass = env->FindClass ("com/rmsl/juce/Java");
 
     if (juceJavaClass != nullptr)
     {
@@ -106,56 +106,6 @@ extern "C" jint JNIEXPORT JNI_OnLoad (JavaVM* vm, void*)
 }
 
 //==============================================================================
-class WeakGlobalRef
-{
-public:
-    WeakGlobalRef() = default;
-    explicit WeakGlobalRef (jobject o) : WeakGlobalRef (o, getEnv()) {}
-    WeakGlobalRef (jobject o, JNIEnv* env) : obj (retain (o, env)) {}
-
-    WeakGlobalRef (const WeakGlobalRef& o) : obj (retain (o.obj)) {}
-    WeakGlobalRef (WeakGlobalRef&& o) noexcept : obj (std::exchange (o.obj, nullptr)) {}
-
-    WeakGlobalRef& operator= (const WeakGlobalRef& o)
-    {
-        WeakGlobalRef { o }.swap (*this);
-        return *this;
-    }
-
-    WeakGlobalRef& operator= (WeakGlobalRef&& o) noexcept
-    {
-        WeakGlobalRef { std::move (o) }.swap (*this);
-        return *this;
-    }
-
-    ~WeakGlobalRef() noexcept { clear(); }
-
-    void clear (JNIEnv* env = getEnv())
-    {
-        if (obj != nullptr)
-            env->DeleteWeakGlobalRef (obj);
-    }
-
-    auto lock (JNIEnv* env = getEnv()) const
-    {
-        return LocalRef { env->NewLocalRef (obj) };
-    }
-
-private:
-    void swap (WeakGlobalRef& other) noexcept
-    {
-        std::swap (other.obj, obj);
-    }
-
-    static jweak retain (jweak o, JNIEnv* env = getEnv())
-    {
-        return env->NewWeakGlobalRef (o);
-    }
-
-    jweak obj = nullptr;
-};
-
-//==============================================================================
 class JuceActivityWatcher final : public ActivityLifecycleCallbacks
 {
 public:
@@ -172,16 +122,21 @@ public:
 
         ScopedLock lock (currentActivityLock);
 
-        if (auto locked = currentActivity.lock (env))
+        if (currentActivity != nullptr)
         {
-            if (env->IsSameObject (locked, activity) != 0)
+            // see Clarification June 2001 in JNI reference for why this is
+            // necessary
+            LocalRef<jobject> localStorage (env->NewLocalRef (currentActivity));
+
+            if (env->IsSameObject (localStorage.get(), activity) != 0)
                 return;
 
-            currentActivity = {};
+            env->DeleteWeakGlobalRef (currentActivity);
+            currentActivity = nullptr;
         }
 
         if (activity != nullptr)
-            currentActivity = WeakGlobalRef { activity };
+            currentActivity = env->NewWeakGlobalRef (activity);
     }
 
     void onActivityStopped (jobject activity) override
@@ -190,15 +145,16 @@ public:
 
         ScopedLock lock (currentActivityLock);
 
-        if (auto locked = currentActivity.lock (env))
+        if (currentActivity != nullptr)
         {
             // important that the comparison happens in this order
             // to avoid race condition where the weak reference becomes null
             // just after the first check
-            if (env->IsSameObject (locked, activity) != 0
-                || env->IsSameObject (locked, nullptr) != 0)
+            if (env->IsSameObject (currentActivity, activity) != 0
+                || env->IsSameObject (currentActivity, nullptr) != 0)
             {
-                currentActivity = {};
+                env->DeleteWeakGlobalRef (currentActivity);
+                currentActivity = nullptr;
             }
         }
     }
@@ -206,13 +162,13 @@ public:
     LocalRef<jobject> getCurrent()
     {
         ScopedLock lock (currentActivityLock);
-        return currentActivity.lock();
+        return LocalRef<jobject> (getEnv()->NewLocalRef (currentActivity));
     }
 
     LocalRef<jobject> getMain()
     {
         ScopedLock lock (currentActivityLock);
-        return mainActivity.lock();
+        return LocalRef<jobject> (getEnv()->NewLocalRef (mainActivity));
     }
 
     static JuceActivityWatcher& getInstance()
@@ -228,15 +184,18 @@ private:
 
         ScopedLock lock (currentActivityLock);
 
-        if (auto locked = mainActivity.lock (env))
+        if (mainActivity != nullptr)
         {
-            if (env->IsSameObject (locked, nullptr) != 0)
-                mainActivity = {};
+            if (env->IsSameObject (mainActivity, nullptr) != 0)
+            {
+                env->DeleteWeakGlobalRef (mainActivity);
+                mainActivity = nullptr;
+            }
         }
 
-        if (mainActivity.lock() == nullptr)
+        if (mainActivity == nullptr)
         {
-            auto appContext = getAppContext();
+            LocalRef<jobject> appContext (getAppContext());
             auto mainActivityPath = getMainActivityClassPath();
 
             if (mainActivityPath.isNotEmpty())
@@ -247,7 +206,7 @@ private:
                 // This may be problematic for apps which use several activities with the same type. We just
                 // assume that the very first activity of this type is the main one
                 if (activityPath == mainActivityPath)
-                    mainActivity = WeakGlobalRef { context };
+                    mainActivity = env->NewWeakGlobalRef (context);
             }
         }
     }
@@ -258,7 +217,7 @@ private:
 
         if (mainActivityClassPath.isEmpty())
         {
-            auto appContext = getAppContext();
+            LocalRef<jobject> appContext (getAppContext());
 
             if (appContext != nullptr)
             {
@@ -291,7 +250,8 @@ private:
     }
 
     CriticalSection currentActivityLock;
-    WeakGlobalRef currentActivity, mainActivity;
+    jweak currentActivity = nullptr;
+    jweak mainActivity    = nullptr;
     ActivityLifecycleCallbackForwarder forwarder { GlobalRef { getAppContext() }, this };
 };
 
@@ -327,7 +287,7 @@ void Thread::initialiseJUCE (void* jniEnv, void* context)
         firstCall = false;
 
         // if we ever support unloading then this should probably be a weak reference
-        androidApkContext = GlobalRef { LocalRef { (jobject) context } };
+        androidApkContext = env->NewGlobalRef (static_cast<jobject> (context));
         JuceActivityWatcher::getInstance();
 
        #if JUCE_MODULE_AVAILABLE_juce_events && JUCE_ANDROID

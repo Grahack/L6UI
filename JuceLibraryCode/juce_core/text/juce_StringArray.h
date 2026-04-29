@@ -315,8 +315,8 @@ public:
         token delimiters, and return the parsed tokens as an array.
         @see addTokens
     */
-    [[nodiscard]] static StringArray fromTokens (StringRef stringToTokenise,
-                                                 bool preserveQuotedStrings);
+    static StringArray fromTokens (StringRef stringToTokenise,
+                                   bool preserveQuotedStrings);
 
     /** Returns an array containing the tokens in a given string.
 
@@ -331,9 +331,9 @@ public:
                                     between quotes is not broken up into tokens.
         @see addTokens
     */
-    [[nodiscard]] static StringArray fromTokens (StringRef stringToTokenise,
-                                                 StringRef breakCharacters,
-                                                 StringRef quoteCharacters);
+    static StringArray fromTokens (StringRef stringToTokenise,
+                                   StringRef breakCharacters,
+                                   StringRef quoteCharacters);
 
     /** Returns an array containing the lines in a given string.
 
@@ -341,7 +341,7 @@ public:
         array containing these lines. Line-break characters are omitted from the strings that
         are added to the array.
     */
-    [[nodiscard]] static StringArray fromLines (StringRef stringToBreakUp);
+    static StringArray fromLines (StringRef stringToBreakUp);
 
     //==============================================================================
     /** Removes all elements from the array. */
