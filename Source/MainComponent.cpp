@@ -2,7 +2,7 @@
 
 MainComponent::MainComponent()
 {
-    setSize(1000, 1000);
+    setSize(1000, 768);
 
     juce::Colour dark = juce::Colour (40, 40, 40);
     juce::Colour l6 = customLookAndFeel.l6;
