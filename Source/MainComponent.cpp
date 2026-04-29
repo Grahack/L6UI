@@ -183,6 +183,8 @@ MainComponent::~MainComponent()
     midiOut.reset(); // Closes the MIDI out port
     for (int i = 0; i < slidersCount; i++)
         slidersArray[i]->removeListener(this);
+    for (int i = 0; i < 6; i++)
+        mutesArray[i]->removeListener(this);
     for (int i = 0; i < 3; i++)
         scenesArray[i]->removeListener(this);
     for (int i = 0; i < 5; i++)
