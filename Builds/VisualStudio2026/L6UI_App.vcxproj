@@ -172,9 +172,6 @@
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPMidi1ToMidi2DefaultTranslator.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPStringUtils.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPSysEx7.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -185,9 +182,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\juce_MidiBuffer.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\juce_MidiDataConcatenator_test.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\midi\juce_MidiFile.cpp">
@@ -298,30 +292,6 @@
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_SampleRateHelpers.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPEndpoints.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPInput.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPIOHelpers.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPLegacyVirtualInput.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPLegacyVirtualOutput.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPOutput.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPSession.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPVirtualEndpoint.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_MidiDeviceListConnectionBroadcaster.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -329,9 +299,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_MidiMessageCollector.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_WaitFreeListeners.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\aaudio\AAudioLoader.cpp">
@@ -530,6 +497,9 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\native\juce_Audio_ios.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="C:\JUCE\modules\juce_audio_devices\native\juce_Bela_linux.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_devices\native\juce_CoreAudio_mac.cpp">
@@ -1342,9 +1312,6 @@
     <ClCompile Include="C:\JUCE\modules\juce_graphics\geometry\juce_Rectangle_test.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_graphics\geometry\juce_RectangleList_test.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_graphics\image_formats\jpglib\jaricom.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1615,9 +1582,6 @@
     <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\LevelRun.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\Object.c">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\PairingLookup.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1628,9 +1592,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBBase.c">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBCodepoint.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBCodepointSequence.c">
@@ -2246,7 +2207,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPMidi1ToBytestreamTranslator.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPMidi1ToMidi2DefaultTranslator.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPProtocols.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPStringUtils.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPReceiver.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPSysEx7.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPUtils.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\midi\ump\juce_UMPView.h"/>
@@ -2288,30 +2249,15 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\utilities\juce_Interpolators.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\utilities\juce_Reverb.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\utilities\juce_SmoothedValue.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_audio_basics\juce_audio_basics.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_audio_basics\juce_audio_basics.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_AudioDeviceManager.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_AudioIODevice.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_AudioIODeviceType.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_SystemAudioVolume.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPBlock.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPDisconnectionListener.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPEndpoint.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPEndpointId.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPEndpoints.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPInput.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPLegacyVirtualInput.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPLegacyVirtualOutput.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPOutput.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPSession.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPStaticDeviceInfo.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPVirtualEndpoint.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPBytestreamInputHandler.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\ump\juce_UMPU32InputHandler.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_MidiDevices.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_MidiMessageCollector.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_ScheduledEventThread.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\midi_io\juce_WaitFreeListeners.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\asio\asio.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\asio\asiosys.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\asio\iasiodrv.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\include\oboe\AudioStream.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\include\oboe\AudioStreamBase.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\include\oboe\AudioStreamBuilder.h"/>
@@ -2388,12 +2334,11 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\opensles\EngineOpenSLES.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\opensles\OpenSLESUtilities.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\opensles\OutputMixerOpenSLES.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\juce_ALSA_weak_linux.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\juce_Audio_ios.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\native\juce_HighPerformanceAudioHelpers_android.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\sources\juce_AudioSourcePlayer.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\sources\juce_AudioTransportSource.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_audio_devices\juce_audio_devices.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_audio_devices\juce_audio_devices.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_AbstractFifo.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_Array.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_ArrayAllocationBase.h"/>
@@ -2417,7 +2362,6 @@
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_SparseSet.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_Variant.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\detail\juce_CallbackListenerList.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_core\detail\juce_IncrementRef.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\detail\juce_LruCache.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\detail\juce_NativeFileHandle.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\files\juce_AndroidDocument.h"/>
@@ -2557,7 +2501,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_core\zip\juce_GZIPDecompressorInputStream.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\zip\juce_ZipFile.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\zip\juce_zlib.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_core\juce_core.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_core\juce_core.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\app_properties\juce_ApplicationProperties.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\app_properties\juce_PropertiesFile.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\undomanager\juce_UndoableAction.h"/>
@@ -2567,7 +2511,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\values\juce_ValueTree.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\values\juce_ValueTreePropertyWithDefault.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\values\juce_ValueTreeSynchroniser.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_data_structures\juce_data_structures.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_data_structures\juce_data_structures.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_events\broadcasters\juce_ActionBroadcaster.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_events\broadcasters\juce_ActionListener.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_events\broadcasters\juce_AsyncUpdater.h"/>
@@ -2598,7 +2542,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_events\timers\juce_MultiTimer.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_events\timers\juce_TimedCallback.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_events\timers\juce_Timer.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_events\juce_events.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_events\juce_events.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\colour\juce_Colour.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\colour\juce_ColourGradient.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\colour\juce_Colours.h"/>
@@ -2607,7 +2551,6 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\contexts\juce_GraphicsContext.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\contexts\juce_LowLevelGraphicsContext.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\contexts\juce_LowLevelGraphicsSoftwareRenderer.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\detail\juce_FontRendering.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\detail\juce_JustifiedText.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\detail\juce_Ranges.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\detail\juce_ShapedText.h"/>
@@ -2949,21 +2892,20 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\native\juce_RenderingHelpers.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\placement\juce_Justification.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\placement\juce_RectanglePlacement.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBAlgorithm.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBBase.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBBidiType.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBCodepoint.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBCodepointSequence.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBConfig.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBGeneralCategory.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBLine.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBMirrorLocator.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBParagraph.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBRun.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBScript.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBScriptLocator.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SBVersion.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi\SheenBidi.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBAlgorithm.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBBase.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBBidiType.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBCodepoint.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBCodepointSequence.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBConfig.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBGeneralCategory.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBLine.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBMirrorLocator.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBParagraph.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBRun.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBScript.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SBScriptLocator.h"/>
+    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Headers\SheenBidi.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\BidiChain.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\BidiTypeLookup.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\BracketQueue.h"/>
@@ -2971,7 +2913,6 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\GeneralCategoryLookup.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\IsolatingRun.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\LevelRun.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\Object.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\PairingLookup.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\RunExtrema.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\RunKind.h"/>
@@ -2979,7 +2920,6 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBAlgorithm.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBAssert.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBBase.h"/>
-    <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBCodepoint.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBCodepointSequence.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBLine.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\SBLog.h"/>
@@ -2989,7 +2929,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\ScriptLookup.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\ScriptStack.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\unicode\sheenbidi\Source\StatusStack.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_graphics\juce_graphics.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_graphics\juce_graphics.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\accessibility\enums\juce_AccessibilityActions.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\accessibility\enums\juce_AccessibilityEvent.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\accessibility\enums\juce_AccessibilityRole.h"/>
@@ -3194,7 +3134,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\windows\juce_TopLevelWindow.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\windows\juce_VBlankAttachment.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\windows\juce_WindowUtils.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_gui_basics\juce_gui_basics.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_gui_basics\juce_gui_basics.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\ci\juce_CIChannelAddress.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\ci\juce_CIDevice.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\ci\juce_CIDeviceFeatures.h"/>
@@ -3226,11 +3166,10 @@
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\detail\juce_CIPropertyDataMessageChunker.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\detail\juce_CIPropertyHostUtils.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_midi_ci\detail\juce_CIResponder.h"/>
-    <ClInclude Include="..\..\..\..\..\apps\JUCE\modules\juce_midi_ci\juce_midi_ci.h"/>
+    <ClInclude Include="..\..\JuceLibraryCode\juce_midi_ci\juce_midi_ci.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\JUCE\modules\juce_audio_devices\native\asio\LICENSE.txt"/>
     <None Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\common\README.md"/>
     <None Include="C:\JUCE\modules\juce_audio_devices\native\oboe\src\flowgraph\resampler\README.md"/>
     <None Include="C:\JUCE\modules\juce_audio_devices\native\oboe\CMakeLists.txt"/>
