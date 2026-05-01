@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="s5wofl" name="L6UI-win" projectType="guiapp" useAppConfig="0"
+<JUCERPROJECT id="s5wofl" name="L6UI" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" projectLineFeed="&#10;">
-  <MAINGROUP id="ZCuQQW" name="L6UI-win">
+  <MAINGROUP id="ZCuQQW" name="L6UI">
     <GROUP id="{CA03FE49-975E-CBF8-AB36-A34F9AD69B87}" name="Source">
       <FILE id="ama85y" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="cbwcwn" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

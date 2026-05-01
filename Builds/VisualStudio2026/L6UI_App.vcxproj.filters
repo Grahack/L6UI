@@ -2,10 +2,10 @@
 
 <Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="L6UI-win\Source">
+    <Filter Include="L6UI\Source">
       <UniqueIdentifier>{571CFED5-0663-EFE8-9AE2-CC03BA92DD66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="L6UI-win">
+    <Filter Include="L6UI">
       <UniqueIdentifier>{C6CF7A59-6EB5-98CB-77E6-09F51A38CE9A}</UniqueIdentifier>
     </Filter>
     <Filter Include="JUCE Modules\juce_audio_basics\audio_play_head">
@@ -380,10 +380,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Main.cpp">
-      <Filter>L6UI-win\Source</Filter>
+      <Filter>L6UI\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\MainComponent.cpp">
-      <Filter>L6UI-win\Source</Filter>
+      <Filter>L6UI\Source</Filter>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.cpp">
       <Filter>JUCE Modules\juce_audio_basics\audio_play_head</Filter>
@@ -2581,10 +2581,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\MainComponent.h">
-      <Filter>L6UI-win\Source</Filter>
+      <Filter>L6UI\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\CustomLookAndFeel.h">
-      <Filter>L6UI-win\Source</Filter>
+      <Filter>L6UI\Source</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
       <Filter>JUCE Modules\juce_audio_basics\audio_play_head</Filter>

@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio Version 18
 
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "L6UI-win - App", "L6UI-win_App.vcxproj", "{BEA0A734-99F4-DC8A-19EC-9116DCD0C1EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "L6UI - App", "L6UI_App.vcxproj", "{BEA0A734-99F4-DC8A-19EC-9116DCD0C1EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
