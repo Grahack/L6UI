@@ -72,7 +72,7 @@ MainComponent::MainComponent()
                 {
                     int m = 100;
                     int M = 8000;
-                    int freq = m + value * (M-m)/127;
+                    int freq = m + value * (M-m)/127;  // warning
                     int v = static_cast<int>(freq);
                     return juce::String(v);
                 };
@@ -229,7 +229,7 @@ void MainComponent::resized()
     // Tracks section
     // We use a 7th (half) strip for the global section, so we have 6 spaces
     int trackSpace = totalW / 30;  // space between tracks
-    int trackWidth = (totalW - 6 * trackSpace) / 6.5;
+    int trackWidth = (totalW - 6 * trackSpace) / 6.5;  // warning
     int potsHeight = totalH / 9;  // 8 pots + 1 mute
     // Protect this section from a premature execution
     if (slidersArray.size() < slidersCount) return;
@@ -239,7 +239,7 @@ void MainComponent::resized()
     {
         auto trackArea = area.removeFromLeft(trackWidth);
         auto potsSliderArea = trackArea.removeFromTop(8*potsHeight);
-        auto potsArea = potsSliderArea.removeFromLeft(trackWidth * 0.7);
+        auto potsArea = potsSliderArea.removeFromLeft(trackWidth * 0.7);  // warning
         for (int j = 0; j < 8; j++)
         {
             slidersArray[9*i + j]->setBounds(potsArea.removeFromTop(potsHeight));
@@ -406,7 +406,6 @@ void MainComponent::buttonClicked(juce::Button* button)
     }
     if (button == &compButton)
     {
-        int value = button->getToggleState() ? 1 : 0;
         juce::String stateString = state ? "on" : "off";
         DBG("comp " + stateString);
         int ccValue = state ? 127 : 0;
@@ -420,7 +419,7 @@ void MainComponent::sliderValueChanged(juce::Slider* slider)
     {
         if (slider == slidersArray[i])
         {
-            int trackNum = (int)(i/9 + 1);
+            int trackNum = (int)(i/9 + 1);  // warning?
             int value = (*slider).getValue();
             DBG("Track " + std::to_string(trackNum));
             DBG((tracksNameCCs[i]).name);
