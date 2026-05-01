@@ -30,14 +30,6 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_data_structures" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_midi_ci" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../apps/JUCE/modules"/>
       </MODULEPATHS>
     </VS2026>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
@@ -46,14 +38,6 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
-        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
-        <MODULEPATH id="juce_core" path="../../juce"/>
-        <MODULEPATH id="juce_data_structures" path="../../juce"/>
-        <MODULEPATH id="juce_events" path="../../juce"/>
-        <MODULEPATH id="juce_graphics" path="../../juce"/>
-        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
-        <MODULEPATH id="juce_midi_ci" path="../../juce"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022">
@@ -62,14 +46,6 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_data_structures" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_midi_ci" path="C:\JUCE\modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>
